@@ -1,0 +1,1 @@
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Comic+Sans+MS&pause=1000&color=E0F708&width=435&lines=%D0%9E%D0%BD%D0%BB%D0%B0%D0%B9%D0%BD+%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0+%22Elib%22)](https://git.io/typing-svg)
