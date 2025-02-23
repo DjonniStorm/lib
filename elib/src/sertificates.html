@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="icon" type="image/svg" href="/icon.svg" />
+    <title>Сертификаты</title>
+    <script src="./index.js" type="module"></script>
+  </head>
+  <body>
+    <header class="header">
+      <a href="/" class="header__logo">
+        <img src="/icon.svg" alt="Elib logo" />
+      </a>
+      <section class="header__controls">
+        <form class="header__form">
+          <input
+            name="search"
+            class="header__input"
+            type="text"
+            placeholder="Поиск"
+            spellcheck
+            required
+          />
+          <button type="submit" class="header__form__button">
+            <img src="/images/icons/search.svg" alt="search icon" />
+          </button>
+        </form>
+        <section class="header__navs">
+          <nav class="header__nav">
+            <a class="link" href="/sertificates">
+              <div class="header__nav-icon">
+                <img src="/images/icons/reedem.svg" alt="icon" />
+              </div>
+            </a>
+          </nav>
+        </section>
+      </section>
+      <a href="/login" class="link user-profile">
+        <div class="user-profile-block">Вход</div>
+      </a>
+    </header>
+    <main class="main-sertificates">
+      <div class="heading">
+        <div class="main-sertificates__head">
+          <h2 class="main-sertificates__head__info-text">Дарите знания!</h2>
+          <div class="main-sertificates__head__logo">
+            <img
+              class="main-sertificates__head__logo-img"
+              src="/images/posters/book-present.svg"
+              alt="banner logo"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="main-sertificates__suggestions">
+        <section class="main-sertificates__banner">
+          <div class="main-sertificates__banner__logo">
+            <img
+              class="main-sertificates__banner__logo-img"
+              src="/images/posters/book-3-m.svg"
+              alt="banner logo"
+            />
+          </div>
+          <div class="main-sertificates__banner__info">
+            <h3 class="main-sertificates__banner__info-text">
+              Подписка на 3 месяца
+            </h3>
+            <span class="main-sertificates__banner__info-description"
+              >Всё, от Гарри Поттера до Незнайки. Открывайте для себя новые
+              удивительные миры и занимательные истории!</span
+            >
+            <button type="button" class="primary-button">Купить</button>
+          </div>
+        </section>
+        <section class="main-sertificates__banner">
+          <div class="main-sertificates__banner__logo">
+            <img
+              class="main-sertificates__banner__logo-img"
+              src="/images/posters/book-3-m.svg"
+              alt="banner logo"
+            />
+          </div>
+          <div class="main-sertificates__banner__info">
+            <h3 class="main-sertificates__banner__info-text">
+              Подписка на 3 месяца
+            </h3>
+            <span class="main-sertificates__banner__info-description"
+              >Всё, от Гарри Поттера до Незнайки. Открывайте для себя новые
+              удивительные миры и занимательные истории!</span
+            >
+            <button type="button" class="primary-button">Купить</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

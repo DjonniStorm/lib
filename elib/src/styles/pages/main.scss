@@ -1,0 +1,15 @@
+.main-content {
+  flex: 1;
+  padding: 20px;
+
+  &__heading-block {
+    margin: 20px;
+  }
+
+  &__books {
+    display: grid;
+    gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    // justify-self: center;
+  }
+}

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Личный кабинет</title>
+    <link rel="icon" type="image/svg" href="/icon.svg" />
+    <script type="module" src="./index.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <a href="/" class="header__logo">
+        <img src="/icon.svg" alt="Elib logo" />
+      </a>
+      <section class="header__controls">
+        <form class="header__form">
+          <input
+            name="search"
+            class="header__input"
+            type="text"
+            placeholder="Поиск"
+            spellcheck
+            required
+          />
+          <button type="submit" class="header__form__button">
+            <img src="/images/icons/search.svg" alt="search icon" />
+          </button>
+        </form>
+        <section class="header__navs">
+          <nav class="header__nav">
+            <a class="link" href="/sertificates">
+              <div class="header__nav-icon">
+                <img src="/images/icons/reedem.svg" alt="icon" />
+              </div>
+            </a>
+          </nav>
+        </section>
+      </section>
+      <a href="/login" class="link user-profile">
+        <div class="user-profile-block">Вход</div>
+      </a>
+    </header>
+    <main>
+      <main class="main-content">
+        <section>
+          <div class="main-content__heading-block">
+            <h2>Ваши книги, <span style="color: red;">user</span></h2>
+            <hr />
+          </div>
+          <div class="main-content__books">
+            <product-card
+              img="/images/covers/harry-potter.jpg"
+              link="/book.html?book=harry-potter"
+              name="Гарри Поттер и философский камень"
+            ></product-card>
+            <product-card
+              img="/images/covers/harry-potter.jpg"
+              link="/book.html?book=harry-potter"
+              name="Гарри Поттер и философский камень"
+            ></product-card>
+          </div>
+        </section>
+    </main>
+  </body>
+</html>

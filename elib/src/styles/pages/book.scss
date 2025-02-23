@@ -1,0 +1,43 @@
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+
+  .book-reader {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    position: relative;
+    flex: 1;
+    button {
+      position: absolute;
+      z-index: 10;
+      padding: 20px;
+      top: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      span {
+        display: block;
+        line-height: 1;
+      }
+    }
+
+    #next {
+      right: 5px;
+      top: 50%;
+      bottom: 50%;
+    }
+    #prev {
+      left: 5px;
+      top: 50%;
+      bottom: 50%;
+    }
+    #area {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}

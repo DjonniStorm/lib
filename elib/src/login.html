@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="icon" type="image/svg" href="/icon.svg" />
+    <title>Вход</title>
+    <script src="./index.js" type="module"></script>
+  </head>
+  <body>
+    <header class="header">
+      <a href="/" class="header__logo">
+        <img src="/icon.svg" />
+      </a>
+      <section class="header__section">
+        <span class="header__title">Онлайн библиотека</span>
+      </section>
+    </header>
+    <main class="main-auth">
+      <section class="main-auth__form-section">
+        <div class="main-auth__form-block">
+          <h1 class="main-auth__heading">С возвращением!</h1>
+          <form class="main-auth__form">
+            <!-- <label for="email"></label> -->
+            <input
+              id="email"
+              name="email"
+              type="text"
+              placeholder="Email"
+              required
+            />
+            <!-- <label for="password"></label> -->
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Пароль"
+              required
+            />
+            <button type="submit" class="primary-button primary-button__large">
+              Войти
+            </button>
+          </form>
+          <a class="link" href="/register">зарегистрироваться</a>
+        </div>
+      </section>
+      <section class="main-auth__bg-image">
+        <img src="/images/posters/book-shkaf.svg" />
+      </section>
+    </main>
+  </body>
+</html>

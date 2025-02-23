@@ -1,0 +1,57 @@
+.card {
+  $border-radius: 10px;
+  $gray-color: #f7f7f7;
+  $dark-color: #000;
+  $shadow-color: #00000025;
+  border: 2px solid $gray-color;
+  border-radius: $border-radius;
+  overflow: hidden;
+  max-width: min-content;
+  min-width: min-content;
+  box-shadow: 0 4px 4px $shadow-color;
+
+  &__cover {
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+
+    &__img {
+      object-fit: cover;
+      max-height: 300px;
+    }
+  }
+
+  &__description {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+    &__text {
+      white-space: wrap;
+    }
+  }
+
+  &__button {
+    width: 3em;
+    padding: 5px 5px;
+    border: 1px solid $dark-color;
+    border-radius: $border-radius;
+
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    cursor: pointer;
+    &__img {
+      margin: auto;
+    }
+    &:hover {
+      background-color: $shadow-color;
+    }
+    &__text {
+      text-decoration: none;
+      color: $dark-color;
+      font-weight: 400;
+      font-size: large;
+      padding: 5px;
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "elib",
+  "version": "0.0.0",
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@stylistic/eslint-plugin-js": "^3.1.0",
+    "eslint": "^9.20.0",
+    "eslint-plugin-perfectionist": "^4.8.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "globals": "^15.14.0",
+    "prettier": "^3.5.0",
+    "sass-embedded": "^1.83.4",
+    "vite": "^6.1.0"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint:fix": "eslint --fix"
+  },
+  "type": "module",
+  "dependencies": {
+    "epubjs": "^0.3.93"
+  }
+}
