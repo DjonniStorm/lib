@@ -29,40 +29,58 @@
             <img src="/images/icons/search.svg" alt="search icon" />
           </button>
         </form>
-        <section class="header__navs">
-          <nav class="header__nav">
-            <a class="link" href="/sertificates">
-              <div class="header__nav-icon">
-                <img src="/images/icons/reedem.svg" alt="icon" />
-              </div>
-            </a>
-          </nav>
-        </section>
+        <nav class="header__navs">
+          <div class="user-profile">
+            <span class="user-profile-toggle">
+              <p class="user-icon">user</p>
+              <!-- <img src="/path/to/user-icon.svg" alt="User" class="user-icon" /> -->
+            </span>
+            <div class="user-profile-dropdown">
+              <a href="/profile" class="link">user</a>
+              <a href="/sertificates" class="link">Сертификаты</a>
+              <hr />
+              <a href="/logout" class="link">Выйти</a>
+            </div>
+          </div>
+        </nav>
       </section>
-      <a href="/login" class="link user-profile">
-        <div class="user-profile-block">Вход</div>
-      </a>
     </header>
-    <main>
-      <main class="main-content">
-        <section>
-          <div class="main-content__heading-block">
-            <h2>Ваши книги, <span style="color: red;">user</span></h2>
-            <hr />
-          </div>
-          <div class="main-content__books">
-            <product-card
-              img="/images/covers/harry-potter.jpg"
-              link="/book.html?book=harry-potter"
-              name="Гарри Поттер и философский камень"
-            ></product-card>
-            <product-card
-              img="/images/covers/harry-potter.jpg"
-              link="/book.html?book=harry-potter"
-              name="Гарри Поттер и философский камень"
-            ></product-card>
-          </div>
-        </section>
+    <main class="main-content">
+      <section>
+        <div class="main-content__heading-block">
+          <h2>Ваши книги, <span style="color: red">user</span></h2>
+          <hr />
+        </div>
+        <div class="main-content__books">
+          <product-card
+            img="/images/covers/harry-potter.jpg"
+            link="/book.html?book=harry-potter"
+            name="Гарри Поттер и философский камень"
+          ></product-card>
+          <product-card
+            img="/images/covers/harry-potter.jpg"
+            link="/book.html?book=harry-potter"
+            name="Гарри Поттер и философский камень"
+          ></product-card>
+        </div>
+      </section>
     </main>
+    <footer class="footer">
+      <div class="footer__img">
+        <img class="footer__img--content" src="/icon.svg" alt="logo" />
+      </div>
+      <div class="footer__content">
+        <div class="footer__content__links">
+          <a class="footer__content__links-link" href="/">Главная</a>
+          <a class="footer__content__links-link" href="/register"
+            >Регистрация</a
+          >
+          <a class="footer__content__links-link" href="/sertificates"
+            >Купоны и бонусы</a
+          >
+        </div>
+        <div>2025-2025 &#128218;</div>
+      </div>
+    </footer>
   </body>
 </html>

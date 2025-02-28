@@ -13,10 +13,36 @@
   <body>
     <header class="header">
       <a href="/" class="header__logo">
-        <img src="/icon.svg" />
+        <img src="/icon.svg" alt="Elib logo" />
       </a>
-      <section class="header__section">
-        <span class="header__title">Онлайн библиотека</span>
+      <section class="header__controls">
+        <form class="header__form">
+          <input
+            name="search"
+            class="header__input"
+            type="text"
+            placeholder="Поиск"
+            spellcheck
+            required
+          />
+          <button type="submit" class="header__form__button">
+            <img src="/images/icons/search.svg" alt="search icon" />
+          </button>
+        </form>
+        <nav class="header__navs">
+          <div class="user-profile">
+            <span class="user-profile-toggle">
+              <p class="user-icon">user</p>
+              <!-- <img src="/path/to/user-icon.svg" alt="User" class="user-icon" /> -->
+            </span>
+            <div class="user-profile-dropdown">
+              <a href="/profile" class="link">user</a>
+              <a href="/sertificates" class="link">Сертификаты</a>
+              <hr />
+              <a href="/logout" class="link">Выйти</a>
+            </div>
+          </div>
+        </nav>
       </section>
     </header>
     <main class="main-auth">
@@ -51,5 +77,22 @@
         <img src="/images/posters/book-shkaf.svg" />
       </section>
     </main>
+    <footer class="footer">
+      <div class="footer__img">
+        <img class="footer__img--content" src="/icon.svg" alt="logo" />
+      </div>
+      <div class="footer__content">
+        <div class="footer__content__links">
+          <a class="footer__content__links-link" href="/">Главная</a>
+          <a class="footer__content__links-link" href="/register"
+            >Регистрация</a
+          >
+          <a class="footer__content__links-link" href="/sertificates"
+            >Купоны и бонусы</a
+          >
+        </div>
+        <div>2025-2025 &#128218;</div>
+      </div>
+    </footer>
   </body>
 </html>
