@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Шерлок Холмс",
+    "author": "Артур Конан Дойл",
+    "path": "sherlockholmes.epub",
+    "genre": "Детектив",
+    "cover": "/images/covers/sherlockholmes.jpg"
+  },
+  {
+    "title": "Гарри Поттер и философский камень",
+    "author": "Джоан Роулинг",
+    "path": "harrypotter.epub",
+    "genre": "Фэнтези",
+    "cover": "/images/covers/harrypotter.jpg"
+  },
+  {
+    "cover": "/images/covers/cover_370796.jpg",
+    "author": "mnbbj",
+    "title": "hgjgyfyt",
+    "genre": "Фэнтези",
+    "path": "92192227.epub"
+  }
+]

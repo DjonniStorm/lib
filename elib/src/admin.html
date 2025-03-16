@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Админ панель</title>
+    <link rel="icon" href="/icon.svg" />
+    <script src="../scripts/book/bookService.ts" type="module" defer></script>
+    <script src="../scripts/index.ts" type="module" defer></script>
+    <link rel="stylesheet" href="../styles/style.scss" />
+  </head>
+  <body>
+    <header class="border-bottom d-flex justify-content-between">
+      <a href="/" class="">
+        <img src="/icon.svg" alt="Elib logo" />
+      </a>
+      <section
+        class="flex-grow-1 d-flex justify-content-around justify-content-md-around justify-content-lg-between align-items-center gap-2 px-2"
+      >
+        <form class="flex-grow-1 d-flex max-width-500 align-items-center gap-2">
+          <input
+            name="search"
+            class="flex-grow-1 form-input"
+            type="text"
+            placeholder="Поиск"
+            spellcheck
+          />
+          <button type="submit" class="btn-secondary">
+            <img src="/images/icons/search.svg" alt="search icon" />
+          </button>
+        </form>
+        <nav class="dropdown">
+          <div
+            class="btn-secondary"
+            type="button"
+            id="dropdownMenuButton1"
+            data-bs-toggle="dropdown"
+            data-bs-auto-close="true"
+            aria-expanded="false"
+          >
+            <img src="/images/icons/account.svg" alt="user icon" />
+          </div>
+          <ul
+            class="dropdown-menu dropdown-menu-end dropdown-menu-lg"
+            aria-labelledby="dropdownMenuButton1"
+            data-bs-popper="static"
+          >
+            <li><a class="dropdown-item" href="/user">user</a></li>
+            <li>
+              <a class="dropdown-item" href="/sertificates">Сертификаты</a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item" href="/logout">Выйти</a>
+            </li>
+          </ul>
+        </nav>
+      </section>
+    </header>
+    <main
+      class="main d-flex flex-column justify-content-center align-items-center"
+    >
+      <section class="container">
+        <div class="row align-items-center mt-0 mt-md-4 mt-lg-4">
+          <h1 class="text-center fs-2 mb-0">Добавление книги:</h1>
+        </div>
+      </section>
+      <form id="bookForm" class="container mt-0 mt-md-4 mt-lg-4 max-width-500">
+        <div class="mb-0 mb-md-2 mb-lg-4">
+          <label for="genre" class="form-label">Жанр</label>
+          <select class="form-select" id="genre" name="genre" required>
+            <option value="" selected disabled>Выберите жанр</option>
+            <option value="Фэнтези">Фэнтези</option>
+            <option value="Научная фантастика">Научная фантастика</option>
+            <option value="Детектив">Детектив</option>
+            <option value="Роман">Роман</option>
+            <option value="Ужасы">Ужасы</option>
+            <option value="Триллер">Триллер</option>
+            <option value="Классика">Классика</option>
+            <option value="Другое">Другое</option>
+          </select>
+        </div>
+        <div class="mb-0 mb-md-2 mb-lg-4">
+          <label for="title" class="form-label">Название книги</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            name="title"
+            placeholder="Название книги"
+          />
+        </div>
+        <div class="mb-0 mb-md-2 mb-lg-4">
+          <label for="author" class="form-label">Автор</label>
+          <input
+            type="text"
+            class="form-control"
+            id="author"
+            name="author"
+            placeholder="Автор"
+          />
+        </div>
+        <div class="mb-0 mb-md-2 mb-lg-4">
+          <label for="poster">Обложка (png, jpg)</label>
+          <input
+            type="file"
+            class="form-control"
+            id="poster"
+            name="poster"
+            accept=".jpg, .jpeg, .png"
+            required
+          />
+        </div>
+        <div class="mb-2 mb-md-4 mb-lg-6">
+          <label for="file" class="form-label">Файл книги (EPUB)</label>
+          <input
+            type="file"
+            class="form-control"
+            name="file"
+            id="file"
+            accept=".epub"
+            required
+          />
+        </div>
+        <div class="d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary">Загрузить книгу</button>
+        </div>
+      </form>
+    </main>
+    <footer class="footer">
+      <div class="footer__img">
+        <img class="footer__img--content" src="/icon.svg" alt="logo" />
+      </div>
+      <div class="flex-grow-1 d-flex gap-4 justify-content-between">
+        <div
+          class="footer__links d-flex flex-column flex-md-row flex-lg-row gap-2"
+        >
+          <a class="link" href="/">Главная</a>
+          <a class="link" href="/register">Регистрация</a>
+          <a class="link" href="/sertificates">Купоны и бонусы</a>
+        </div>
+        <div>2025 &#128218;</div>
+      </div>
+    </footer>
+  </body>
+</html>

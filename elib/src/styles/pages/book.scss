@@ -1,49 +1,9 @@
-body {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  margin: 0;
+.book-reader button {
+  background-color: var(--main-color);
+}
 
-  .book-reader {
-    display: flex;
-    align-items: center;
-    justify-items: center;
-    position: relative;
-    flex: 1;
-    button {
-      position: absolute;
-      z-index: 10;
-      padding: 20px;
-      top: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--main-color);
-
-      span {
-        display: block;
-        line-height: 1;
-      }
-    }
-
-    #next {
-      right: 5px;
-    }
-    #prev {
-      left: 5px;
-    }
-    #area {
-      height: 100%;
-      width: 100%;
-    }
-  }
-  @media screen and (width <= 420px) {
-    // top: 100%;
-    .book-reader {
-      button {
-        top: 90%;
-        bottom: 0;
-      }
-    }
+@media screen and (width <= 420px) {
+  .book-reader button {
+    top: 90%;
   }
 }

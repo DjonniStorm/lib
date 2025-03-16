@@ -1,6 +1,8 @@
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import stylisticJsPlugin from '@stylistic/eslint-plugin-js';
+import tseslint from '@typescript-eslint/eslint-plugin';
 import prettierPlugin from 'eslint-plugin-prettier';
+import tsParser from '@typescript-eslint/parser';
 import jsPlugin from '@eslint/js';
 import globals from 'globals';
 
@@ -73,9 +75,27 @@ export default [
       stylistic: stylisticJsPlugin,
       prettier: prettierPlugin,
     },
-    files: ['**/*.js'],
+    files: ['**/*.{js,ts}'],
   },
   {
-    ignores: ['node_modules', 'vite.config.js'],
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+    languageOptions: {
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+      parser: tsParser,
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+    },
+    files: ['**/*.ts'],
+  },
+  {
+    ignores: ['node_modules', 'vite.config.js', 'dist'],
   },
 ];

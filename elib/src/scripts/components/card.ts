@@ -4,21 +4,20 @@ export class Card extends HTMLElement {
   static get observedAttributes() {
     return ['img', 'name', 'link', 'icon'];
   }
-  #link;
-  #name;
   /* захардкоженная иконка на кнопке */
-  #icon;
+  private _icon: string = '/images/icons/add.svg';
+  private _link: string = '';
+  private _name: string = '';
   /* обложка */
-  #img;
+  private _img: string = '';
 
   constructor() {
     super();
-    this.#icon = '/images/icons/add.svg';
   }
 
   render() {
-    if (this.#link !== '/') {
-      this.#icon = '/images/icons/resume.svg';
+    if (this._link !== '/') {
+      this._icon = '/images/icons/resume.svg';
     }
 
     return `
@@ -29,16 +28,16 @@ export class Card extends HTMLElement {
     <div class="card">
             <div class="card__cover">
                 <img class="card__cover__img" src="${
-                  this.#img
-                }" alt="${this.#name} cover" lazy />
+                  this._img
+                }" alt="${this._name} cover" lazy />
             </div>
             <div class="card__description">
                 <span class="card__description__text">
-                    ${this.#name}
+                    ${this._name}
                 </span>
                 <button class="card__button">
-                <a href="${this.#link}">
-                    <img src="${this.#icon}" class="card__button__img" 
+                <a href="${this._link}">
+                    <img src="${this._icon}" class="card__button__img" 
     alt="add icon" />
                 </a>
                 </button>
@@ -47,30 +46,30 @@ export class Card extends HTMLElement {
       `;
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     if (name === 'img') {
-      this.#img = newValue;
+      this._img = newValue;
     } else if (name === 'href') {
-      this.#link = newValue;
+      this._link = newValue;
     } else if (name === 'name') {
-      this.#name = newValue;
+      this._name = newValue;
     } else if (name === 'icon') {
       if (newValue) {
-        this.#icon = newValue;
+        this._icon = newValue;
       }
     }
   }
 
   updateData() {
-    this.#img = this.getAttribute('img');
-    this.#link = this.getAttribute('link');
-    this.#name = this.getAttribute('name');
-    // this.#icon = this.getAttribute("icon");
+    this._img = this.getAttribute('img') ?? '';
+    this._link = this.getAttribute('link') ?? '';
+    this._name = this.getAttribute('name') ?? '';
+    this._icon = this.getAttribute('icon') ?? '/images/icons/add.svg';
   }
 
   connectedCallback() {
     this.attachShadow({ mode: 'open' });
     this.updateData();
-    this.shadowRoot.innerHTML = this.render();
+    this.shadowRoot!.innerHTML = this.render();
   }
 }
