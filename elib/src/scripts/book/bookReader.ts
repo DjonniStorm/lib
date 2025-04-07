@@ -22,6 +22,7 @@ export class BookReader {
       await this.book.ready;
       console.log('[Init] Book metadata:', (this.book as any).metadata);
       console.log('[Init] Creating rendition...');
+      console.log(document.querySelector('#area'));
       this.rendition = this.book.renderTo('area', {
         allowScriptedContent: true,
         height: '100%',

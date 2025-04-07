@@ -12,12 +12,46 @@ export const BOOKS_PATH = path.join(
   'books.json',
 );
 
-console.log(BOOKS_PATH);
+export const USERS_PATH = path.join(
+  __dirname,
+  '..',
+  'src',
+  'public',
+  'users.json',
+);
+
+export const CERTIFICATES_PATH = path.join(
+  __dirname,
+  '..',
+  'src',
+  'public',
+  'certificates.json',
+);
+
+export type User = {
+  certificates: Certificate[];
+  password: string;
+  email: string;
+  books: Book[];
+  name: string;
+  card: string;
+  id: number;
+};
 
 export type Book = {
   author: string;
-  title: string;
   cover: string;
   genre: string;
+  name: string;
   path: string;
+  id: number;
 };
+
+export type Certificate = {
+  name: string;
+  text: string;
+  img: string;
+  id: number;
+};
+
+console.log(BOOKS_PATH);

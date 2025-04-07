@@ -1,7 +1,7 @@
 [
   {
     "id": 0,
-    "name": "Шерлок Холмс",
+    "title": "Шерлок Холмс",
     "author": "Артур Конан Дойл",
     "path": "sherlockholmes.epub",
     "genre": "Детектив",
@@ -9,10 +9,10 @@
   },
   {
     "id": 1,
-    "name": "пенис",
+    "title": "Гарри Поттер и философский камень",
     "author": "Джоан Роулинг",
     "path": "harrypotter.epub",
     "genre": "Фэнтези",
-    "cover": "/images/covers/nda.jpg"
+    "cover": "/images/covers/harrypotter.jpg"
   }
 ]
