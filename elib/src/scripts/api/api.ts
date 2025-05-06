@@ -1,114 +1,22 @@
-import { SERVER_URL } from './consts';
+import { getAllItems, createItem, updateItem, deleteItem } from './client';
+import { Book, Certificate, Genre, Author } from '../../types';
 
-export const getItems = async <T>(uri: string): Promise<T[]> => {
-  try {
-    const res = await fetch(`${SERVER_URL}${uri}`);
+export const getBooks = async (): Promise<Book[]> => getAllItems('books');
+export const postBook = async (data: FormData): Promise<Book> =>
+  createItem('books', data);
+export const updateBook = async (data: FormData): Promise<Book> =>
+  updateItem('books', data.get('id') as string, data);
+export const deleteBook = async (id: string): Promise<void> =>
+  deleteItem('books', id);
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch ${uri}`);
-    }
+export const getCertificates = async (): Promise<Certificate[]> =>
+  getAllItems('certificates');
+export const postCertificate = async (data: FormData): Promise<Certificate> =>
+  createItem('certificates', data);
+export const updateCertificate = async (data: FormData): Promise<Certificate> =>
+  updateItem('certificates', data.get('id') as string, data);
+export const deleteCertificate = async (id: string): Promise<void> =>
+  deleteItem('certificates', id);
 
-    return await res.json();
-  } catch (e) {
-    console.error(`Failed to load ${uri}`, e);
-
-    return [];
-  }
-};
-
-export const postItem = async <T>(
-  uri: string,
-  item: FormData | T,
-): Promise<T> => {
-  try {
-    const options: RequestInit = { method: 'POST' };
-
-    if (item instanceof FormData) {
-      options.body = item; // Для multipart/form-data заголовок не нужен
-    } else {
-      options.headers = { 'Content-Type': 'application/json' };
-      options.body = JSON.stringify(item);
-    }
-
-    const res = await fetch(`${SERVER_URL}${uri}`, options);
-
-    if (!res.ok) {
-      throw new Error(`Failed to post ${uri}`);
-    }
-
-    return await res.json();
-  } catch (e) {
-    console.error(`Failed to post ${uri}`, e);
-    throw e;
-  }
-};
-
-export const deleteItem = async (uri: string, id: string): Promise<void> => {
-  try {
-    const res = await fetch(`${SERVER_URL}${uri}/${id}`, { method: 'DELETE' });
-
-    if (!res.ok) {
-      throw new Error(`Failed to delete ${uri}`);
-    }
-  } catch (e) {
-    console.error(`Failed to delete ${uri}`, e);
-    throw e;
-  }
-};
-
-export const updateItem = async <T>(
-  uri: string,
-  item: FormData | T,
-): Promise<T> => {
-  try {
-    const options: RequestInit = { method: 'PUT' };
-
-    if (item instanceof FormData) {
-      options.body = item;
-    } else {
-      options.headers = { 'Content-Type': 'application/json' };
-      options.body = JSON.stringify(item);
-    }
-
-    const res = await fetch(`${SERVER_URL}${uri}`, options);
-
-    if (!res.ok) {
-      throw new Error(`Failed to update ${uri}`);
-    }
-
-    return await res.json();
-  } catch (e) {
-    console.error(`Failed to update ${uri}`, e);
-    throw e;
-  }
-};
-
-// Специфичные функции
-export const getBooks = () => getItems<Book>('/books');
-
-export const postBook = (book: FormData) => postItem<Book>('/add-book', book);
-
-export const deleteBook = (id: string) => deleteItem('/delete-book', id);
-
-export const updateBook = (book: FormData) =>
-  updateItem<Book>('/update-book', book);
-
-export const getUsers = () => getItems<User>('/users');
-
-export const postUser = (user: User) => postItem<User>('/add-user', user);
-
-export const deleteUser = (id: string) => deleteItem('/delete-user', id);
-
-export const updateUser = (user: FormData) =>
-  updateItem<User>('/update-user', user);
-
-export const getCertificates = () => getItems<Certificate>('/certificates');
-
-export const postCertificate = (certificate: FormData) =>
-  postItem<Certificate>('/add-certificate', certificate);
-
-export const deleteCertificate = (id: string) =>
-  deleteItem('/delete-certificate', id);
-
-export const updateCertificate = (certificate: FormData) =>
-  updateItem<Certificate>('/update-certificate', certificate);
+export const getGenres = async (): Promise<Genre[]> => getAllItems('genres');
+export const getAuthors = async (): Promise<Author[]> => getAllItems('authors');

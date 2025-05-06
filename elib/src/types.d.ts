@@ -1,25 +1,25 @@
-type User = {
-  certificates: Certificate[];
-  password: string;
-  email: string;
-  books: Book[];
-  name: string;
-  card: string;
+export interface Book {
   id: number;
-};
-
-type Book = {
-  author: string;
+  name: string;
+  authors: Author[];
+  genres: Genre[];
   cover: string;
-  genre: string;
-  name: string;
   path: string;
-  id: number;
-};
+}
 
-type Certificate = {
+export interface Certificate {
+  id: number;
   name: string;
   text: string;
   img: string;
+}
+
+export interface Genre {
   id: number;
-};
+  name: string;
+}
+
+export interface Author {
+  id: number;
+  name: string;
+}

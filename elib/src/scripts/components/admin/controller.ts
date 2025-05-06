@@ -1,115 +1,76 @@
-// src/Admin.ts
 import { AdminModel } from './model';
 import { AdminView } from './view';
 
 export class AdminController extends HTMLElement {
-  private model: AdminModel;
   private view: AdminView;
+  private model: AdminModel;
 
   constructor() {
     super();
+    const toggleCategoryCallback = this.toggleCategory.bind(this);
+    const deleteCallback = this.deleteItem.bind(this);
+    const selectCallback = this.selectItem.bind(this);
+    const submitCallback = this.submitForm.bind(this);
     this.model = new AdminModel();
     this.view = new AdminView(
       this,
       this.model,
-      this.handleCategoryChange.bind(this),
-      this.handleAdd.bind(this),
-      this.handleUpdate.bind(this),
-      this.handleDelete.bind(this),
-      this.handleSelect.bind(this),
-      this.handleSubmit.bind(this), // Добавляем колбэк onSubmit
+      toggleCategoryCallback,
+      deleteCallback,
+      selectCallback,
+      submitCallback,
     );
   }
 
-  connectedCallback(): void {
-    this.style.display = 'block';
-    this.style.width = '100%';
-    this.style.minHeight = '100%';
-    this.style.padding = '20px';
-    this.model
-      .fetchAll()
-      .then(() => {
-        this.view.render();
-      })
-      .catch(error => {
-        console.error('Ошибка при загрузке данных:', error);
-        this.innerHTML = '<p>Не удалось загрузить данные.</p>';
-      });
+  connectedCallback() {
+    this.view.render();
+    this.getAllItems();
   }
 
-  private handleCategoryChange(category: string): void {
-    this.model.setCurrentCategory(
-      category as 'certificates' | 'books' | 'users',
-    );
-    this.model.setSelectedId(null);
+  async getAllItems() {
+    await this.model.fetchAll();
     this.view.update();
   }
 
-  private async handleAdd(item: any): Promise<void> {
-    try {
-      await this.model.addItem(item, this.model.getCurrentCategory());
-      this.model.setSelectedId(null);
-      this.view.update();
-    } catch (error) {
-      console.error('Ошибка при добавлении:', error);
-      alert('Не удалось добавить элемент.');
-    }
-  }
-
-  private async handleUpdate(item: any): Promise<void> {
-    try {
-      await this.model.updateItem(item, this.model.getCurrentCategory());
-      this.view.update();
-    } catch (error) {
-      console.error('Ошибка при обновлении:', error);
-      alert('Не удалось обновить элемент.');
-    }
-  }
-
-  private async handleDelete(id: number): Promise<void> {
-    try {
-      await this.model.deleteItem(id, this.model.getCurrentCategory());
-      this.view.update();
-    } catch (error) {
-      console.error('Ошибка при удалении:', error);
-      alert('Не удалось удалить элемент.');
-    }
-  }
-
-  private handleSelect(id: number): void {
-    this.model.setSelectedId(id);
+  toggleCategory(category: string) {
+    this.model.currentCategory = category as 'certificates' | 'books';
     this.view.update();
   }
 
-  // Новый колбэк для отправки данных через модель
-  private async handleSubmit(
-    data: FormData | any,
-    isUpdate: boolean,
-  ): Promise<void> {
-    const category = this.model.getCurrentCategory();
+  selectItem(id: number) {
+    this.model.selectedId = id;
+    this.view.update();
+  }
+
+  async deleteItem(id: number) {
+    const category = this.model.currentCategory;
+    this.model.deleteItemOptimistic(id, category);
+    this.view.update();
+    try {
+      await this.model.deleteItem(id, category);
+      await this.getAllItems();
+    } catch (err) {
+      console.error('Ошибка удаления:', err);
+      this.model.rollbackOptimistic(category);
+      this.view.update();
+    }
+  }
+
+  async submitForm(data: FormData, isUpdate: boolean) {
+    const category = this.model.currentCategory;
+    this.model.addItemOptimistic(data, category);
+    this.view.update();
     try {
       if (isUpdate) {
-        // Если это FormData, убедимся что ID присутствует
-        if (data instanceof FormData) {
-          const selectedItem = this.model.getSelectedItem();
-          if (selectedItem && !data.get('id')) {
-            data.append('id', selectedItem.id.toString());
-          }
-        }
         await this.model.updateItem(data, category);
       } else {
         await this.model.addItem(data, category);
       }
-      this.model.setSelectedId(null);
+      await this.getAllItems();
+    } catch (err) {
+      console.error('Ошибка операции:', err);
+      this.model.rollbackOptimistic(category);
       this.view.update();
-    } catch (error) {
-      console.error(
-        `Ошибка при ${isUpdate ? 'обновлении' : 'добавлении'} (${category}):`,
-        error,
-      );
-      alert(`Не удалось ${isUpdate ? 'обновить' : 'добавить'} элемент.`);
     }
   }
 }
-
-customElements.define('admin-controller', AdminController);

@@ -1,17 +1,7 @@
-import { Book } from '../../../server/constants';
+import { getBooks } from '../api/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const response = await fetch('http://localhost:3000/books');
-
-  console.log(response);
-
-  if (!response.ok) {
-    console.warn('Ошибка при получении книг', await response.text());
-
-    return;
-  }
-
-  const books = await response.json();
+  const books = await getBooks();
 
   console.log(books, Object.keys(books).length);
 
@@ -29,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   books.forEach((book: Book) => {
     const card = document.createElement('product-card');
 
-    card.setAttribute('name', book.title);
+    card.setAttribute('name', book.name);
     card.setAttribute('link', '/');
     card.setAttribute('img', book.cover);
 

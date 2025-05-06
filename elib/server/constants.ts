@@ -12,14 +12,6 @@ export const BOOKS_PATH = path.join(
   'books.json',
 );
 
-export const USERS_PATH = path.join(
-  __dirname,
-  '..',
-  'src',
-  'public',
-  'users.json',
-);
-
 export const CERTIFICATES_PATH = path.join(
   __dirname,
   '..',
@@ -28,30 +20,44 @@ export const CERTIFICATES_PATH = path.join(
   'certificates.json',
 );
 
-export type User = {
-  certificates: Certificate[];
-  password: string;
-  email: string;
-  books: Book[];
-  name: string;
-  card: string;
-  id: number;
-};
+export const GENRES_PATH = path.join(
+  __dirname,
+  '..',
+  'src',
+  'public',
+  'genres.json',
+);
 
-export type Book = {
-  author: string;
+export const AUTHORS_PATH = path.join(
+  __dirname,
+  '..',
+  'src',
+  'public',
+  'authors.json',
+);
+
+export interface Book {
+  id: number;
+  name: string;
+  authors: Author[];
+  genres: Genre[];
   cover: string;
-  genre: string;
-  name: string;
   path: string;
-  id: number;
-};
+}
 
-export type Certificate = {
+export interface Certificate {
+  id: number;
   name: string;
   text: string;
   img: string;
-  id: number;
-};
+}
 
-console.log(BOOKS_PATH);
+export interface Genre {
+  id: number;
+  name: string;
+}
+
+export interface Author {
+  id: number;
+  name: string;
+}

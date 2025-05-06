@@ -1,170 +1,96 @@
-import fs from 'fs';
+import fs from 'fs/promises';
+import { Book, Certificate, Author, Genre } from './constants';
 
-import { Certificate, Book, User } from './constants';
+function getEntityType(item: Book | Certificate): string {
+  if ('authors' in item && 'genres' in item) return 'Book';
+  if ('img' in item && 'text' in item) return 'Certificate';
+  return 'Unknown';
+}
 
-const BOOKS_PATH = './books.json';
-const USERS_PATH = './users.json';
-const CERTIFICATES_PATH = './certificates.json';
-
-export async function updateItemJson<T>(item: T, path: string): Promise<T> {
+export async function updateItemJson(
+  item: Book | Certificate,
+  path: string,
+): Promise<Book | Certificate> {
   try {
-    const data = await readJson<T>(path);
-    console.log('Текущие данные в файле:', data);
+    console.log(
+      `Updating entity of type: ${getEntityType(item)} at path: ${path}`,
+    );
+    const data = await readJson(path);
+    const itemId = item.id;
 
-    // Получаем ID из item
-    const itemId = (item as any).id;
-    console.log('ID для обновления:', itemId);
-
-    // Проверяем ID
     if (typeof itemId !== 'number' || isNaN(itemId)) {
       throw new Error('Некорректный ID объекта');
     }
 
-    // Ищем индекс элемента
-    const indexToUpdate = data.findIndex((i: any) => i.id === itemId);
-    console.log('Индекс для обновления:', indexToUpdate);
-
+    const indexToUpdate = data.findIndex(
+      (i: Book | Certificate) => i.id === itemId,
+    );
     if (indexToUpdate === -1) {
       throw new Error(`Элемент с ID ${itemId} не найден`);
     }
 
-    // Обновляем данные
-    const oldItem = data[indexToUpdate];
-    console.log('Старые данные:', oldItem);
-    console.log('Новые данные:', item);
-
     data[indexToUpdate] = item;
-
-    // Записываем в файл
-    const jsonString = JSON.stringify(data, null, 2);
-    console.log('Записываем в файл:', jsonString);
-
-    await fs.promises.writeFile(path, jsonString, 'utf8');
-
-    return data[indexToUpdate] as T;
+    await fs.writeFile(path, JSON.stringify(data, null, 2), 'utf8');
+    return data[indexToUpdate];
   } catch (error) {
     console.error('Ошибка при обновлении файла:', error);
     throw error;
   }
 }
 
-export async function updateJson<T>(item: Omit<T, 'id'>): Promise<boolean> {
+export async function updateJson(
+  item: Book | Certificate,
+  path: string,
+): Promise<Book | Certificate> {
   try {
-    const path = getPathForType(item);
-    const data = await readJson<T>(path);
-
-    console.log('data', data);
-    data.push({
-      id: data.length + 1,
+    console.log(
+      `Adding entity of type: ${getEntityType(item)} at path: ${path}`,
+    );
+    const data = await readJson(path);
+    const newItem = {
+      id: data.length
+        ? Math.max(...data.map((i: Book | Certificate) => i.id)) + 1
+        : 0,
       ...item,
-    });
-
-    await fs.promises.writeFile(path, JSON.stringify(data, null, 2), 'utf8');
-
-    return true;
+    };
+    data.push(newItem);
+    await fs.writeFile(path, JSON.stringify(data, null, 2), 'utf8');
+    return newItem;
   } catch (error) {
-    console.error('Ошибка при обновлении файла', error);
-
-    return false;
+    console.error('Ошибка при обновлении файла:', error);
+    throw error;
   }
 }
 
-export async function readJson<T>(path: string): Promise<T[]> {
+export async function readJson(
+  path: string,
+): Promise<(Book | Certificate | Author | Genre)[]> {
   try {
-    const data = await fs.promises.readFile(path, 'utf8');
-    const jsonData = JSON.parse(data) as T[];
-
-    console.log(jsonData);
-
-    return jsonData;
+    const data = await fs.readFile(path, 'utf8');
+    return JSON.parse(data);
   } catch (error) {
-    console.error('Ошибка при чтении файла', error);
-
+    console.error('Ошибка при чтении файла:', error);
     return [];
   }
 }
 
-export async function checkItem<T>(item: Omit<T, 'id'>): Promise<boolean> {
-  const items = await readJson<T>(getPathForType(item));
-
-  return Array.isArray(items) && items.some(b => b.name === item.name);
+export async function checkItem(
+  item: Book | Certificate,
+  path: string,
+): Promise<boolean> {
+  const items = await readJson(path);
+  return items.some((i: Book | Certificate) => i.name === item.name);
 }
 
-function getPathForType<T>(item: T): string {
-  if (isBook(item)) {
-    return BOOKS_PATH;
-  } else if (isUser(item)) {
-    return USERS_PATH;
-  } else if (isCertificate(item)) {
-    return CERTIFICATES_PATH;
-  }
-
-  throw new Error('Unknown type');
-}
-
-function isUser(item: any): item is User {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'email' in item &&
-    'card' in item &&
-    typeof (item as any).email === 'string' &&
-    typeof (item as any).card === 'string'
-  );
-}
-
-function isCertificate(item: unknown): item is Certificate {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'img' in item &&
-    typeof (item as any).img === 'string'
-  );
-}
-
-function isBook(item: any): item is Book {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'genre' in item &&
-    typeof (item as any).genre === 'string'
-  );
-}
-
-export const deleteItem = async (id: string, path: string) => {
+export async function deleteItem(id: string, path: string): Promise<void> {
   try {
     const data = await readJson(path);
-
-    console.log(
-      id,
-      'all data: ',
-      data,
-      data.filter(item => {
-        console.log(
-          'items:',
-          item,
-          id,
-          typeof item,
-          typeof id,
-          typeof item.id,
-          item.id === +id,
-        );
-
-        return item.id === +id;
-      }),
+    const filteredData = data.filter(
+      (item: Book | Certificate) => item.id !== parseInt(id),
     );
-    await fs.promises.writeFile(
-      path,
-      JSON.stringify(
-        data.filter(item => item.id !== +id),
-        null,
-        2,
-      ),
-      'utf8',
-    );
-
-    return true;
-  } catch (e) {
-    return false;
+    await fs.writeFile(path, JSON.stringify(filteredData, null, 2), 'utf8');
+  } catch (error) {
+    console.error('Ошибка при удалении элемента:', error);
+    throw error;
   }
-};
+}

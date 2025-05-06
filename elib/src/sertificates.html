@@ -9,6 +9,11 @@
     <link rel="icon" type="image/svg" href="/icon.svg" />
     <title>Сертификаты</title>
     <link rel="stylesheet" href="../styles/style.scss" />
+    <script
+      src="../scripts/certificates/certificatesFetcher.ts"
+      type="module"
+    ></script>
+    <script src="../scripts/index.ts" type="module"></script>
   </head>
   <body>
     <header class="border-bottom d-flex justify-content-between">
@@ -73,46 +78,10 @@
           </div>
         </div>
       </div>
-      <div class="d-grid grid-cols-1 grid-md-cols-2 gap-4 p-4">
-        <section class="col d-flex justify-content-center border rounded p-4">
-          <div class="d-flex justify-content-center">
-            <img
-              class="w-100"
-              src="/images/posters/book-3-m.svg"
-              alt="banner logo"
-            />
-          </div>
-          <div
-            class="d-flex flex-column gap-2 align-items-center justify-content-center"
-          >
-            <h3 class="text-center">Подписка на 3 месяца</h3>
-            <span class="text-center"
-              >Всё, от Гарри Поттера до Незнайки. Открывайте для себя новые
-              удивительные миры и занимательные истории!</span
-            >
-            <button type="button" class="btn-primary">Купить</button>
-          </div>
-        </section>
-        <section class="col d-flex justify-content-center border rounded p-4">
-          <div class="d-flex justify-content-center">
-            <img
-              class="w-100"
-              src="/images/posters/book-3-m.svg"
-              alt="banner logo"
-            />
-          </div>
-          <div
-            class="d-flex flex-column gap-2 align-items-center justify-content-center"
-          >
-            <h3 class="text-center">Подписка на 3 месяца</h3>
-            <span class="text-center"
-              >Всё, от Гарри Поттера до Незнайки. Открывайте для себя новые
-              удивительные миры и занимательные истории!</span
-            >
-            <button type="button" class="btn-primary">Купить</button>
-          </div>
-        </section>
-      </div>
+      <div
+        id="certificates-list"
+        class="d-grid grid-cols-1 grid-md-cols-2 gap-4 p-4"
+      ></div>
     </main>
     <footer class="footer">
       <div class="footer__img">

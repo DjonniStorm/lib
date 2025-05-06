@@ -1,7 +1,3 @@
-import './components/admin/controller';
+import { AdminController } from './components/admin/controller';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const main = document.querySelector('main');
-
-  main?.appendChild(document.createElement('admin-controller'));
-});
+customElements.define('admin-element', AdminController);

@@ -15,7 +15,7 @@ export class Card extends HTMLElement {
     super();
   }
 
-  render() {
+  private render() {
     if (this._link !== '/') {
       this._icon = '/images/icons/resume.svg';
     }

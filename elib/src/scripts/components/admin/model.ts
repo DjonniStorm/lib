@@ -1,140 +1,234 @@
-// src/models/AdminModel.ts
 import {
-  updateCertificate,
-  deleteCertificate,
-  getCertificates,
-  postCertificate,
-  updateBook,
-  deleteBook,
-  updateUser,
-  deleteUser,
   getBooks,
   postBook,
-  getUsers,
-  postUser,
+  updateBook,
+  deleteBook,
+  getCertificates,
+  postCertificate,
+  updateCertificate,
+  deleteCertificate,
+  getGenres,
+  getAuthors,
 } from '../../api/api';
+import { Book, Certificate, Genre, Author } from '../../../types';
 
-export class AdminModel {
-  private currentCategory: 'certificates' | 'books' | 'users' = 'books';
-  private certificates: Certificate[] = [];
-  private selectedId: number | null = null;
-  private books: Book[] = [];
-  private users: User[] = [];
+export class AdminModel extends EventTarget {
+  private _currentCategory: 'certificates' | 'books' = 'books';
+  private _certificates: Certificate[] = [];
+  private _books: Book[] = [];
+  private _genres: Genre[] = [];
+  private _authors: Author[] = [];
+  private _selectedId: number | null = null;
+  private _optimisticState: {
+    books: Book[];
+    certificates: Certificate[];
+  } | null = null;
 
-  async updateItem<T>(
-    item: FormData | T,
-    category: 'certificates' | 'books' | 'users',
+  async fetchAll(): Promise<void> {
+    this._books = await getBooks();
+    this._certificates = await getCertificates();
+    this._genres = await getGenres();
+    this._authors = await getAuthors();
+    this.dispatchEvent(new Event('update'));
+  }
+
+  async addItem(
+    item: FormData,
+    category: 'certificates' | 'books',
   ): Promise<void> {
-    console.log('Updating item:', item);
-
     if (category === 'books') {
-      // Если пришел объект Book, преобразуем его в FormData
-      let formData: FormData;
-      if (!(item instanceof FormData)) {
-        const book = item as Book;
-        formData = new FormData();
-        formData.append('id', book.id.toString()); // Важно! Преобразуем id в строку
-        formData.append('name', book.name);
-        formData.append('author', book.author);
-        formData.append('genre', book.genre);
-        if (book.path) formData.append('path', book.path);
-        if (book.cover) formData.append('cover', book.cover);
-      } else {
-        formData = item;
-      }
-
-      const updatedBook = await updateBook(formData);
-      this.books = this.books.map(b =>
-        b.id === updatedBook.id ? updatedBook : b,
-      );
-    } else if (category === 'users') {
-      const updatedUser = await updateUser(item as User); // Для юзеров — объект
-
-      this.users = this.users.map(u =>
-        u.id === updatedUser.id ? updatedUser : u,
-      );
-    } else if (category === 'certificates') {
-      const updatedCert = await updateCertificate(item as Certificate); // Для сертификатов — объект (можно доработать)
-
-      this.certificates = this.certificates.map(c =>
-        c.id === updatedCert.id ? updatedCert : c,
-      );
+      const newBook = await postBook(item);
+      this._books.push(newBook);
+    } else {
+      const newCert = await postCertificate(item);
+      this._certificates.push(newCert);
     }
+    this.dispatchEvent(new Event('update'));
+  }
+
+  async updateItem(
+    item: FormData,
+    category: 'certificates' | 'books',
+  ): Promise<void> {
+    if (category === 'books') {
+      const updatedBook = await updateBook(item);
+      const index = this._books.findIndex(
+        b => b.id === parseInt(item.get('id') as string),
+      );
+      if (index !== -1) this._books[index] = updatedBook;
+    } else {
+      const updatedCert = await updateCertificate(item);
+      const index = this._certificates.findIndex(
+        c => c.id === parseInt(item.get('id') as string),
+      );
+      if (index !== -1) this._certificates[index] = updatedCert;
+    }
+    this.dispatchEvent(new Event('update'));
   }
 
   async deleteItem(
     id: number,
-    category: 'certificates' | 'books' | 'users',
+    category: 'certificates' | 'books',
   ): Promise<void> {
     if (category === 'books') {
       await deleteBook(id.toString());
-      this.books = this.books.filter(b => b.id !== id);
-    } else if (category === 'users') {
-      await deleteUser(id.toString());
-      this.users = this.users.filter(u => u.id !== id);
-    } else if (category === 'certificates') {
+      this._books = this._books.filter(b => b.id !== id);
+    } else {
       await deleteCertificate(id.toString());
-      this.certificates = this.certificates.filter(c => c.id !== id);
+      this._certificates = this._certificates.filter(c => c.id !== id);
     }
-
-    if (this.selectedId === id) {
-      this.selectedId = null;
-    }
+    if (this._selectedId === id) this._selectedId = null;
+    this.dispatchEvent(new Event('update'));
   }
 
-  async addItem<T>(
-    item: FormData | T,
-    category: 'certificates' | 'books' | 'users',
-  ): Promise<void> {
+  addItemOptimistic(item: FormData, category: 'certificates' | 'books'): void {
+    this._optimisticState = {
+      books: [...this._books],
+      certificates: [...this._certificates],
+    };
     if (category === 'books') {
-      const newBook = await postBook(item as FormData); // Для книг ожидается FormData
+      const authorIds =
+        (item.get('authorIds') as string)
+          ?.split(',')
+          .map(Number)
+          .filter(id => !isNaN(id)) || [];
+      const genreIds =
+        (item.get('genreIds') as string)
+          ?.split(',')
+          .map(Number)
+          .filter(id => !isNaN(id)) || [];
+      const newBook: Book = {
+        id: Date.now(),
+        name: item.get('name') as string,
+        authors: this._authors.filter(a => authorIds.includes(a.id)),
+        genres: this._genres.filter(g => genreIds.includes(g.id)),
+        cover: item.get('poster')
+          ? `/images/covers/${(item.get('poster') as File).name}`
+          : '',
+        path: item.get('file')
+          ? `/books/${(item.get('file') as File).name}`
+          : '',
+      };
+      this._books.push(newBook);
+    } else {
+      const newCert: Certificate = {
+        id: Date.now(),
+        name: item.get('name') as string,
+        text: item.get('text') as string,
+        img: item.get('img')
+          ? `/images/certificates/${(item.get('img') as File).name}`
+          : '',
+      };
+      this._certificates.push(newCert);
+    }
+    this.dispatchEvent(new Event('update'));
+  }
 
-      this.books.push(newBook);
-    } else if (category === 'users') {
-      const newUser = await postUser(item as User); // Для юзеров — объект
+  updateItemOptimistic(
+    item: FormData,
+    category: 'certificates' | 'books',
+  ): void {
+    this._optimisticState = {
+      books: [...this._books],
+      certificates: [...this._certificates],
+    };
+    if (category === 'books') {
+      const id = parseInt(item.get('id') as string);
+      const index = this._books.findIndex(b => b.id === id);
+      if (index !== -1) {
+        const authorIds =
+          (item.get('authorIds') as string)
+            ?.split(',')
+            .map(Number)
+            .filter(id => !isNaN(id)) ||
+          this._books[index].authors.map(a => a.id);
+        const genreIds =
+          (item.get('genreIds') as string)
+            ?.split(',')
+            .map(Number)
+            .filter(id => !isNaN(id)) ||
+          this._books[index].genres.map(g => g.id);
+        this._books[index] = {
+          ...this._books[index],
+          name: item.get('name') as string,
+          authors: this._authors.filter(a => authorIds.includes(a.id)),
+          genres: this._genres.filter(g => genreIds.includes(g.id)),
+          cover: item.get('poster')
+            ? `/images/covers/${(item.get('poster') as File).name}`
+            : this._books[index].cover,
+          path: item.get('file')
+            ? `/books/${(item.get('file') as File).name}`
+            : this._books[index].path,
+        };
+      }
+    } else {
+      const id = parseInt(item.get('id') as string);
+      const index = this._certificates.findIndex(c => c.id === id);
+      if (index !== -1) {
+        this._certificates[index] = {
+          ...this._certificates[index],
+          name: item.get('name') as string,
+          text: item.get('text') as string,
+          img: item.get('img')
+            ? `/images/certificates/${(item.get('img') as File).name}`
+            : this._certificates[index].img,
+        };
+      }
+    }
+    this.dispatchEvent(new Event('update'));
+  }
 
-      this.users.push(newUser);
-    } else if (category === 'certificates') {
-      const newCert = await postCertificate(item as FormData); // Для сертификатов — FormData
+  deleteItemOptimistic(id: number, category: 'certificates' | 'books'): void {
+    this._optimisticState = {
+      books: [...this._books],
+      certificates: [...this._certificates],
+    };
+    if (category === 'books') {
+      this._books = this._books.filter(b => b.id !== id);
+    } else {
+      this._certificates = this._certificates.filter(c => c.id !== id);
+    }
+    if (this._selectedId === id) this._selectedId = null;
+    this.dispatchEvent(new Event('update'));
+  }
 
-      this.certificates.push(newCert);
+  rollbackOptimistic(category: 'certificates' | 'books'): void {
+    if (this._optimisticState) {
+      this._books = [...this._optimisticState.books];
+      this._certificates = [...this._optimisticState.certificates];
+      this._optimisticState = null;
+      this.dispatchEvent(new Event('update'));
     }
   }
 
-  getCurrentItems(): Certificate[] | Book[] | User[] {
-    switch (this.currentCategory) {
-      case 'certificates':
-        return this.certificates;
-      case 'books':
-        return this.books;
-      case 'users':
-        return this.users;
-      default:
-        return this.books;
-    }
+  get currentItems(): (Book | Certificate)[] {
+    return this._currentCategory === 'books' ? this._books : this._certificates;
   }
 
-  getSelectedItem(): Certificate | undefined | Book | User {
-    return this.getCurrentItems().find(
-      (item: any) => item.id === this.selectedId,
-    );
+  get selectedItem(): Book | Certificate | undefined {
+    return this.currentItems.find(item => item.id === this._selectedId);
   }
 
-  async fetchAll(): Promise<void> {
-    this.books = await getBooks();
-    this.users = await getUsers();
-    this.certificates = await getCertificates();
+  get genres(): Genre[] {
+    return this._genres;
   }
 
-  setCurrentCategory(category: 'certificates' | 'books' | 'users'): void {
-    this.currentCategory = category;
+  get authors(): Author[] {
+    return this._authors;
   }
 
-  getCurrentCategory(): 'certificates' | 'books' | 'users' {
-    return this.currentCategory;
+  get currentCategory(): 'certificates' | 'books' {
+    return this._currentCategory;
   }
 
-  setSelectedId(id: number | null): void {
-    this.selectedId = id;
+  set currentCategory(category: 'certificates' | 'books') {
+    this._currentCategory = category;
+    this._selectedId = null;
+    this.dispatchEvent(new Event('update'));
+  }
+
+  set selectedId(id: number | null) {
+    this._selectedId = id;
+    this.dispatchEvent(new Event('update'));
   }
 }

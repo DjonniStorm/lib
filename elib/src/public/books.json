@@ -2,17 +2,35 @@
   {
     "id": 0,
     "name": "Шерлок Холмс",
-    "author": "Артур Конан Дойл",
     "path": "sherlockholmes.epub",
-    "genre": "Детектив",
+    "authors": [
+      0,
+      1
+    ],
+    "genres": [
+      0,
+      1
+    ],
     "cover": "/images/covers/sherlockholmes.jpg"
   },
   {
     "id": 1,
-    "name": "пенис",
-    "author": "Джоан Роулинг",
+    "name": "Гарри Поттер и философский камень",
+    "authors": [
+      2
+    ],
     "path": "harrypotter.epub",
-    "genre": "Фэнтези",
-    "cover": "/images/covers/nda.jpg"
+    "genres": [
+      1
+    ],
+    "cover": "/images/covers/harrypotter.jpg"
+  },
+  {
+    "id": 2,
+    "cover": "/images/covers/scorpion-fly.png",
+    "authors": [],
+    "genres": [],
+    "name": "Назад в будущее",
+    "path": "/books/Sherlock.epub"
   }
 ]
