@@ -159,22 +159,28 @@ export class AdminView {
     `;
     const form = this._formContainer.querySelector('form') as HTMLFormElement;
     form.addEventListener('submit', e => {
-      e.preventDefault();
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
+      try {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        const formData = new FormData(form);
+        const authorIds = Array.from(
+          form.querySelectorAll('input[name="authorIds"]:checked'),
+        ).map(input => (input as HTMLInputElement).value);
+        const genreIds = Array.from(
+          form.querySelectorAll('input[name="genreIds"]:checked'),
+        ).map(input => (input as HTMLInputElement).value);
+        if (authorIds.length) formData.set('authorIds', authorIds.join(','));
+        if (genreIds.length) formData.set('genreIds', genreIds.join(','));
+        console.log('LOG: authorIds:', formData.get('authorIds'));
+        console.log('LOG: genreIds:', formData.get('genreIds'));
+        const isUpdate = !!item;
+        this._onSubmit(formData, isUpdate);
+      } catch (err) {
+        console.error('Ошибка при обработке формы:', err);
       }
-      const formData = new FormData(form);
-      const authorIds = Array.from(
-        form.querySelectorAll('input[name="authorIds"]:checked'),
-      ).map(input => (input as HTMLInputElement).value);
-      const genreIds = Array.from(
-        form.querySelectorAll('input[name="genreIds"]:checked'),
-      ).map(input => (input as HTMLInputElement).value);
-      if (authorIds.length) formData.set('authorIds', authorIds.join(','));
-      if (genreIds.length) formData.set('genreIds', genreIds.join(','));
-      const isUpdate = !!item;
-      this._onSubmit(formData, isUpdate);
     });
   }
 

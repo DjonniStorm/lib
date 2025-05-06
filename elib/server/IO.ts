@@ -50,7 +50,7 @@ export async function updateJson(
     const newItem = {
       id: data.length
         ? Math.max(...data.map((i: Book | Certificate) => i.id)) + 1
-        : 0,
+        : Math.random() * 10,
       ...item,
     };
     data.push(newItem);

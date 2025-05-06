@@ -1,36 +1,48 @@
 [
   {
-    "id": 0,
-    "name": "Шерлок Холмс",
-    "path": "sherlockholmes.epub",
+    "id": 1,
+    "name": "Шерлок Холмс1",
     "authors": [
-      0,
-      1
+      0
     ],
     "genres": [
-      0,
-      1
-    ],
-    "cover": "/images/covers/sherlockholmes.jpg"
-  },
-  {
-    "id": 1,
-    "name": "Гарри Поттер и философский камень",
-    "authors": [
       2
     ],
-    "path": "harrypotter.epub",
-    "genres": [
-      1
-    ],
-    "cover": "/images/covers/harrypotter.jpg"
+    "cover": "/images/covers/sherlockholmes.jpg",
+    "path": "sherlockholmes.epub"
   },
   {
     "id": 2,
-    "cover": "/images/covers/scorpion-fly.png",
-    "authors": [],
-    "genres": [],
+    "name": "Гарри Поттер и философский камень",
+    "authors": [
+      1
+    ],
+    "genres": [
+      1
+    ],
+    "cover": "/images/covers/harrypotter.jpg",
+    "path": "harrypotter.epub"
+  },
+  {
+    "id": 3,
     "name": "Назад в будущее",
+    "authors": [
+      1
+    ],
+    "genres": [],
+    "cover": "/images/covers/scorpion-fly.png",
     "path": "/books/Sherlock.epub"
+  },
+  {
+    "id": 735,
+    "name": "купон2",
+    "authors": [
+      0
+    ],
+    "genres": [
+      1
+    ],
+    "cover": "/images/covers/scorpion-stay.png",
+    "path": "/books/Harry.epub"
   }
 ]

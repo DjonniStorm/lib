@@ -1,7 +1,7 @@
-import fileUpload from 'express-fileupload';
-import express from 'express';
-import path from 'node:path';
+import express, { Request, Response, RequestHandler } from 'express';
 import cors from 'cors';
+import fileUpload from 'express-fileupload';
+import path from 'path';
 import {
   CERTIFICATES_PATH,
   Certificate,
@@ -19,19 +19,56 @@ import {
   checkItem,
   readJson,
 } from './IO';
+import multer from 'multer';
 
 const app = express();
+const port = 3000;
+
+// Настройка multer для загрузки файлов
+const storage = multer.diskStorage({
+  destination: (
+    _req: Request,
+    _file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void,
+  ) => {
+    cb(null, path.join(__dirname, '..', 'src', 'public', 'images', 'covers'));
+  },
+  filename: (
+    _req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void,
+  ) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
 
 app.use(cors());
-app.use(fileUpload());
 app.use(express.json());
+app.use(fileUpload());
 app.use('/public', express.static(path.join(__dirname, '..', 'src', 'public')));
 
 // Books
 app.get('/books', async (req, res) => {
   try {
     const books = await readJson(BOOKS_PATH);
-    res.json(books);
+    const authors = await readJson(AUTHORS_PATH);
+    const genres = await readJson(GENRES_PATH);
+
+    const booksWithFullData = books.map((book: any) => ({
+      ...book,
+      authors: book.authors
+        .map((authorId: number) =>
+          authors.find((a: Author) => a.id === authorId),
+        )
+        .filter(Boolean),
+      genres: book.genres
+        .map((genreId: number) => genres.find((g: Genre) => g.id === genreId))
+        .filter(Boolean),
+    }));
+
+    res.json(booksWithFullData);
   } catch (e) {
     res.status(500).json({ message: 'Ошибка при получении книг' });
   }
@@ -73,7 +110,7 @@ app.post('/books', async (req, res) => {
   const genres = await readJson(GENRES_PATH);
 
   const bookData: Book = {
-    id: 0, // Will be set by updateJson
+    id: +(Math.random() * 1000).toFixed(0), // Will be set by updateJson
     cover: `/images/covers/${poster.name}`,
     authors: authors.filter((a: Author) => authorIds.includes(a.id)),
     genres: genres.filter((g: Genre) => genreIds.includes(g.id)),
@@ -108,53 +145,52 @@ app.post('/books', async (req, res) => {
   }
 });
 
-app.put('/books/:id', async (req, res) => {
+interface FileUploadRequest extends Request {
+  files?: {
+    [key: string]: fileUpload.UploadedFile | fileUpload.UploadedFile[];
+  };
+}
+
+const putBookHandler: RequestHandler = async (req, res) => {
   try {
     const bookId = parseInt(req.params.id);
     if (isNaN(bookId)) {
-      return res.status(400).json({ message: 'Некорректный ID книги' });
+      res.status(400).json({ error: 'Invalid book ID' });
+      return;
     }
 
-    const existingBooks = await readJson(BOOKS_PATH);
-    const existingBook = existingBooks.find((b: Book) => b.id === bookId);
+    const existingBooks = (await readJson(BOOKS_PATH)) as Book[];
+    const existingBook = existingBooks.find(b => b.id === bookId);
+
     if (!existingBook) {
-      return res.status(404).json({ message: 'Книга не найдена' });
+      res.status(404).json({ error: 'Book not found' });
+      return;
     }
 
-    const file = req.files?.file as fileUpload.UploadedFile | undefined;
-    const poster = req.files?.poster as fileUpload.UploadedFile | undefined;
-    const authorIds = req.body.authorIds
-      ? typeof req.body.authorIds === 'string'
-        ? req.body.authorIds.split(',').map(Number)
-        : Array.isArray(req.body.authorIds)
-          ? req.body.authorIds.map(Number)
-          : existingBook.authors.map((a: Author) => a.id)
-      : existingBook.authors.map((a: Author) => a.id);
-    const genreIds = req.body.genreIds
-      ? typeof req.body.genreIds === 'string'
-        ? req.body.genreIds.split(',').map(Number)
-        : Array.isArray(req.body.genreIds)
-          ? req.body.genreIds.map(Number)
-          : existingBook.genres.map((g: Genre) => g.id)
-      : existingBook.genres.map((g: Genre) => g.id);
-    const authors = await readJson(AUTHORS_PATH);
-    const genres = await readJson(GENRES_PATH);
+    const typedReq = req as FileUploadRequest;
+    const coverFile = typedReq.files?.cover as
+      | fileUpload.UploadedFile
+      | undefined;
+    const authors = req.body.authorIds
+      ? req.body.authorIds.split(',').map(Number)
+      : existingBook.authors;
+    const genres = req.body.genreIds
+      ? req.body.genreIds.split(',').map(Number)
+      : existingBook.genres;
 
     const updatedBook: Book = {
-      ...existingBook,
-      cover: poster ? `/images/covers/${poster.name}` : existingBook.cover,
-      authors: authors.filter((a: Author) => authorIds.includes(a.id)),
-      genres: genres.filter((g: Genre) => genreIds.includes(g.id)),
-      path: file ? `/books/${file.name}` : existingBook.path,
-      name: req.body.name || existingBook.name,
       id: bookId,
+      name: req.body.name || existingBook.name,
+      authors,
+      genres,
+      cover: coverFile
+        ? `/images/covers/${coverFile.name}`
+        : existingBook.cover,
+      path: existingBook.path,
     };
 
-    if (file) {
-      await file.mv(path.join(__dirname, '..', 'src', 'public', file.name));
-    }
-    if (poster) {
-      await poster.mv(
+    if (coverFile) {
+      await coverFile.mv(
         path.join(
           __dirname,
           '..',
@@ -162,18 +198,20 @@ app.put('/books/:id', async (req, res) => {
           'public',
           'images',
           'covers',
-          poster.name,
+          coverFile.name,
         ),
       );
     }
 
     const result = await updateItemJson(updatedBook, BOOKS_PATH);
-    res.status(200).json(result);
-  } catch (e) {
-    console.error('Ошибка при обновлении книги:', e);
-    res.status(500).json({ message: 'Ошибка при обновлении книги' });
+    res.json(result);
+  } catch (error) {
+    console.error('Error updating book:', error);
+    res.status(500).json({ error: 'Failed to update book' });
   }
-});
+};
+
+app.put('/books/:id', putBookHandler);
 
 app.delete('/books/:id', async (req, res) => {
   try {
@@ -239,6 +277,37 @@ app.post('/certificates', async (req, res) => {
     res.status(500).json({ message: 'Ошибка при добавлении сертификата' });
   }
 });
+
+const getCertificateHandler: RequestHandler = async (req, res) => {
+  try {
+    const certificateId = parseInt(req.params.id);
+    if (isNaN(certificateId)) {
+      res.status(400).json({ error: 'Invalid certificate ID' });
+      return;
+    }
+
+    const certificates = (await readJson(CERTIFICATES_PATH)) as Certificate[];
+    const certificate = certificates.find(
+      (c: Certificate) => c.id === certificateId,
+    );
+
+    if (!certificate) {
+      res.status(404).json({ error: 'Certificate not found' });
+      return;
+    }
+
+    res.json({
+      id: certificate.id,
+      text: certificate.text,
+      img: certificate.img,
+    });
+  } catch (error) {
+    console.error('Error getting certificate:', error);
+    res.status(500).json({ error: 'Failed to get certificate' });
+  }
+};
+
+app.get('/certificates/:id', getCertificateHandler);
 
 app.put('/certificates/:id', async (req, res) => {
   try {
@@ -315,6 +384,6 @@ app.get('/authors', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
