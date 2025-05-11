@@ -42,8 +42,6 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
-
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
@@ -52,19 +50,19 @@ app.use('/public', express.static(path.join(__dirname, '..', 'public')));
 // Books
 app.get('/books', async (req, res) => {
   try {
-    const books = await readJson(BOOKS_PATH);
+    const books = (await readJson(BOOKS_PATH)) as Book[];
     const authors = await readJson(AUTHORS_PATH);
     const genres = await readJson(GENRES_PATH);
 
-    const booksWithFullData = books.map((book: any) => ({
+    const booksWithFullData = books.map(book => ({
       ...book,
       authors: book.authors
-        .map((authorId: number) =>
+        .map(({ id: authorId }) =>
           authors.find((a: Author) => a.id === authorId),
         )
         .filter(Boolean),
       genres: book.genres
-        .map((genreId: number) => genres.find((g: Genre) => g.id === genreId))
+        .map(({ id: genreId }) => genres.find((g: Genre) => g.id === genreId))
         .filter(Boolean),
     }));
 

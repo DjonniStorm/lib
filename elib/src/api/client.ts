@@ -23,8 +23,6 @@ const makeRequest = async (
     const apiPath = API_PATHS.find(p => path.startsWith(p)) || 'other';
     requestCounts[apiPath as keyof typeof requestCounts]++;
 
-    console.log(`API Request to ${apiPath}: ${method} ${path}`);
-
     const requestParams = params ? `?${params}` : '';
     const pathVariables = vars ? `/${vars}` : '';
     const options: RequestInit = { method };
