@@ -1,21 +1,21 @@
-import { Book, Certificate } from '../../../types';
+import { Certificate, Book } from '../../../types';
 
 export class ItemsList extends HTMLElement {
-  private _listItems: (Book | Certificate)[] = [];
-  private _active: number = -1;
-
-  public set items(value: (Book | Certificate)[]) {
+  public set items(value: (Certificate | Book)[]) {
     this._listItems = value;
     this.update();
   }
-
-  public get items(): (Book | Certificate)[] {
+  public get items(): (Certificate | Book)[] {
     return this._listItems;
   }
 
   public get activeItem(): number {
     return this._active;
   }
+
+  private _listItems: (Certificate | Book)[] = [];
+
+  private _active: number = -1;
 
   constructor() {
     super();
@@ -37,6 +37,15 @@ export class ItemsList extends HTMLElement {
         </div>
       `;
     }
+
+    const alphabetSorted = this._listItems.sort((a, b) =>
+      a.name.localeCompare(b.name, 'ru', {
+        sensitivity: 'base',
+        caseFirst: 'upper',
+      }),
+    );
+
+    console.log('sorted', alphabetSorted, this._listItems);
 
     return `
       <style>
@@ -66,7 +75,7 @@ export class ItemsList extends HTMLElement {
       </style>
       <div class="list-container">
         <div class="list-group" id="list-tab">
-          ${this._listItems
+          ${alphabetSorted
             .map(
               (elem, index) => `
                 <div 
@@ -85,9 +94,13 @@ export class ItemsList extends HTMLElement {
 
   addEventListeners(): void {
     const listItems = this.shadowRoot!.querySelectorAll('.list-group-item');
+
     listItems.forEach((item, index) => {
       item.addEventListener('click', e => {
-        if ((e.target as HTMLElement).classList.contains('delete-btn')) return;
+        if ((e.target as HTMLElement).classList.contains('delete-btn')) {
+          return;
+        }
+
         listItems.forEach(elem => elem.classList.remove('active'));
         item.classList.add('active');
         this._active = index;
@@ -102,9 +115,11 @@ export class ItemsList extends HTMLElement {
     });
 
     const deleteButtons = this.shadowRoot!.querySelectorAll('.delete-btn');
+
     deleteButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const id = parseInt(btn.getAttribute('data-id')!);
+
         this.dispatchEvent(
           new CustomEvent('delete-item', {
             detail: { id },
@@ -120,6 +135,7 @@ export class ItemsList extends HTMLElement {
     if (!this.shadowRoot) {
       this.attachShadow({ mode: 'open' });
     }
+
     this.shadowRoot!.innerHTML = this.render();
     this.addEventListeners();
   }

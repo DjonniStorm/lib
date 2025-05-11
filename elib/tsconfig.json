@@ -19,5 +19,5 @@
 
     "types": ["vite/client"]
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.html", "src/scripts/**/*.ts", "server/**/*.ts", "src/types.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.html", "src/scripts/**/*.ts", "server/**/*.ts", "src/types.d.ts", "server/index.ts"]
 }

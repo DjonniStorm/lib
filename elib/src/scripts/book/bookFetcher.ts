@@ -1,5 +1,6 @@
 import type { Book } from '../../types';
-import { getBooks, getGenres } from '../api/api';
+
+import { getGenres, getBooks } from '../api/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const books = await getBooks();
@@ -25,10 +26,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     card.setAttribute('link', '/');
     card.setAttribute('img', book.cover);
 
-    // Для каждой книги перебираем все её жанры
     book.genres.forEach(genre => {
       const genreObj = genres.find(g => g.id === genre.id);
-      if (!genreObj) return;
+
+      if (!genreObj) {
+        return;
+      }
+
       if (!booksByGenre[genreObj.name]) {
         booksByGenre[genreObj.name] = [card];
       } else {

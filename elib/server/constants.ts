@@ -37,27 +37,27 @@ export const AUTHORS_PATH = path.join(
 );
 
 export interface Book {
-  id: number;
-  name: string;
   authors: Author[];
   genres: Genre[];
   cover: string;
+  name: string;
   path: string;
+  id: number;
 }
 
 export interface Certificate {
-  id: number;
   name: string;
   text: string;
   img: string;
-}
-
-export interface Genre {
   id: number;
-  name: string;
 }
 
 export interface Author {
-  id: number;
   name: string;
+  id: number;
+}
+
+export interface Genre {
+  name: string;
+  id: number;
 }

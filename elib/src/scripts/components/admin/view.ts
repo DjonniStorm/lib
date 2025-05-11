@@ -1,16 +1,16 @@
+import { Certificate, Book } from '../../../types';
 import { AdminModel } from './model';
 import { ItemsList } from './list';
-import { Book, Certificate } from '../../../types';
 
 export class AdminView {
-  private _root: HTMLElement;
-  private _model: AdminModel;
-  private _list: ItemsList;
-  private _formContainer: HTMLDivElement;
+  private _onSubmit: (data: FormData, isUpdate: boolean) => void;
   private _onCategoryChange: (category: string) => void;
   private _onDelete: (id: number) => void;
   private _onSelect: (id: number) => void;
-  private _onSubmit: (data: FormData, isUpdate: boolean) => void;
+  private _formContainer: HTMLDivElement;
+  private _root: HTMLElement;
+  private _model: AdminModel;
+  private _list: ItemsList;
 
   constructor(
     root: HTMLElement,
@@ -32,7 +32,7 @@ export class AdminView {
   render(): void {
     this._list.items = this._model.currentItems;
     this._root.innerHTML = `
-      <div class="container-fluid">
+      <div class="container-fluid w-100 h-100 flex-grow-1">
         <div class="row">
           <div class="col-3">
             <select class="form-select mb-3" id="category">
@@ -62,13 +62,16 @@ export class AdminView {
     console.log('Обновление списка, элементы:', this._model.currentItems);
     this._list.items = this._model.currentItems;
     this._list.update();
-    const selectedItem = this._model.selectedItem;
+
+    const { selectedItem } = this._model;
+
     console.log('Выбранный элемент:', selectedItem);
     this.renderForm(selectedItem);
   }
 
-  private renderForm(item?: Book | Certificate): void {
+  private renderForm(item?: Certificate | Book): void {
     const category = this._model.currentCategory;
+
     this._formContainer.innerHTML = `
       <form class="mt-4">
         <input type="hidden" name="id" id="id" value="${item?.id || ''}" />
@@ -157,26 +160,41 @@ export class AdminView {
         <button type="submit" class="btn btn-primary">${item ? 'Сохранить' : 'Добавить'}</button>
       </form>
     `;
+
     const form = this._formContainer.querySelector('form') as HTMLFormElement;
+
     form.addEventListener('submit', e => {
       try {
         e.preventDefault();
+
         if (!form.checkValidity()) {
           form.reportValidity();
+
           return;
         }
+
         const formData = new FormData(form);
+
         const authorIds = Array.from(
           form.querySelectorAll('input[name="authorIds"]:checked'),
         ).map(input => (input as HTMLInputElement).value);
         const genreIds = Array.from(
           form.querySelectorAll('input[name="genreIds"]:checked'),
         ).map(input => (input as HTMLInputElement).value);
-        if (authorIds.length) formData.set('authorIds', authorIds.join(','));
-        if (genreIds.length) formData.set('genreIds', genreIds.join(','));
+
+        if (authorIds.length) {
+          formData.set('authorIds', authorIds.join(','));
+        }
+
+        if (genreIds.length) {
+          formData.set('genreIds', genreIds.join(','));
+        }
+
         console.log('LOG: authorIds:', formData.get('authorIds'));
         console.log('LOG: genreIds:', formData.get('genreIds'));
+
         const isUpdate = !!item;
+
         this._onSubmit(formData, isUpdate);
       } catch (err) {
         console.error('Ошибка при обработке формы:', err);
@@ -191,7 +209,9 @@ export class AdminView {
     categorySelect.addEventListener('change', () => {
       this._onCategoryChange(categorySelect.value);
     });
+
     const addBtn = this._root.querySelector('#addBtn') as HTMLButtonElement;
+
     addBtn.addEventListener('click', () => {
       this._model.selectedId = null;
       this.renderForm();
@@ -199,10 +219,12 @@ export class AdminView {
     this._list.addEventListener('active-changed', (e: Event) => {
       const { active } = (e as CustomEvent).detail;
       const item = this._list.items[active];
+
       this._onSelect(item.id);
     });
     this._list.addEventListener('delete-item', (e: Event) => {
       const { id } = (e as CustomEvent).detail;
+
       this._onDelete(id);
     });
   }
