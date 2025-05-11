@@ -1,0 +1,146 @@
+[
+  {
+    "id": 1,
+    "name": "Шерлок Холмс1",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 1,
+        "name": "Детектив"
+      }
+    ],
+    "cover": "/images/covers/sherlockholmes.jpg",
+    "path": "sherlockholmes.epub"
+  },
+  {
+    "id": 2,
+    "name": "Гарри Поттер и философский камень",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 1,
+        "name": "Детектив"
+      }
+    ],
+    "cover": "/images/covers/harrypotter.jpg",
+    "path": "harrypotter.epub"
+  },
+  {
+    "id": 31,
+    "cover": "/images/covers/scorpion-stay.png",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 1,
+        "name": "Детектив"
+      }
+    ],
+    "name": "Шерлок Холмс3",
+    "path": "/books/Harry.epub"
+  },
+  {
+    "id": 228,
+    "cover": "/images/covers/740308465af49417ded59a1d7229ab6e.png",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 1,
+        "name": "Детектив"
+      }
+    ],
+    "name": "Шерлок Холмс1234",
+    "path": "/books/ÐÐµÑÐ½ ÐÑÐ»Ñ. ÐÐ¾ÐºÑÑÐ³ ÑÐ²ÐµÑÐ° Ð² Ð²Ð¾ÑÐµÐ¼ÑÐ´ÐµÑÑÑ Ð´Ð½ÐµÐ¹ - royallib.com.epub"
+  },
+  {
+    "id": 394,
+    "cover": "/images/covers/scorpion-stay.png",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 2,
+        "name": "Фэнтези"
+      }
+    ],
+    "name": "купон2",
+    "path": "/books/Harry.epub"
+  },
+  {
+    "id": 726,
+    "cover": "/images/covers/scorpion-stay.png",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 1,
+        "name": "Детектив"
+      }
+    ],
+    "name": "купон23",
+    "path": "/books/Harry.epub"
+  },
+  {
+    "id": 116,
+    "cover": "/images/covers/scorpion-fight.png",
+    "authors": [
+      {
+        "id": 1,
+        "name": "Джоан Роулинг"
+      }
+    ],
+    "genres": [
+      {
+        "id": 2,
+        "name": "Фэнтези"
+      }
+    ],
+    "name": "Гарри Поттер23",
+    "path": "/books/Harry.epub"
+  },
+  {
+    "id": 761,
+    "cover": "/images/covers/scorpion-fly.png",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 1,
+        "name": "Детектив"
+      }
+    ],
+    "name": "Шерлок Холмс",
+    "path": "/books/Harry.epub"
+  }
+]
