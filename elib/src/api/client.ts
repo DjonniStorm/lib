@@ -1,6 +1,9 @@
-import { Book, Certificate } from '../types';
+import { Config } from '../lib/config';
+import type { Book, Certificate } from '../types';
 
-const SERVER_URL = import.meta.env.VITE_API_URL;
+const envConfig = new Config();
+
+const SERVER_URL = envConfig.loadUrl();
 
 const API_PATHS = ['books', 'authors', 'genres', 'certificates'];
 
@@ -26,6 +29,7 @@ const makeRequest = async (
     const requestParams = params ? `?${params}` : '';
     const pathVariables = vars ? `/${vars}` : '';
     const options: RequestInit = { method };
+
     if ((method === 'POST' || method === 'PUT') && data) {
       options.body = data;
     }

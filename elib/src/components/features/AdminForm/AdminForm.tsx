@@ -1,6 +1,7 @@
 import React from 'react';
 import { BookForm } from '../BookForm/BookForm';
 import type { Certificate, Book, List } from '../../../types';
+import { CertificateForm } from '../CertificateForm/CertificateForm';
 
 type Props = {
   initialValue?: Book | Certificate;
@@ -11,5 +12,16 @@ export const AdminForm = ({
   initialValue,
   currentList,
 }: Props): React.JSX.Element => {
-  return <>{currentList == 'books' && <BookForm></BookForm>}</>;
+  console.log(initialValue);
+  return (
+    <>
+      {currentList == 'books' && <BookForm initialValue={initialValue} />}
+      {currentList == 'certificates' && (
+        <CertificateForm initialValue={initialValue} />
+      )}
+      {currentList !== 'books' && currentList !== 'certificates' && (
+        <p>не знаю что это такое</p>
+      )}
+    </>
+  );
 };

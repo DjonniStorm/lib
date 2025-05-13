@@ -3,13 +3,13 @@ import { useElibStore } from '../../store/store';
 import { CertificateCard } from '../features/CertificateCard/CertificateCard';
 
 export const CertificatesPage = (): React.JSX.Element => {
-  const { certificates, addCertificates } = useElibStore();
+  const certificates = useElibStore(store => store.certificates);
 
   React.useEffect(() => {
     if (certificates.length === 0) {
-      addCertificates();
+      useElibStore.getState().fetchCertificates();
     }
-  }, [certificates, addCertificates]);
+  }, []);
 
   return (
     <main className="flex-1 p-5">

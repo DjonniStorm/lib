@@ -22,16 +22,12 @@ import { createBooksSlice } from './slices/booksSlice';
 import { createCertificatesSlice } from './slices/certificatesSlice';
 import { createSharedSlice } from './slices/sharedSlice';
 
-// Создаем хранилище, соблюдая порядок инициализации слайсов
 export const useElibStore = create<Store>()(
   subscribeWithSelector((...args) => ({
-    // Сначала базовые слайсы
     ...createAuthorsSlice(...args),
     ...createGenresSlice(...args),
-    // Затем слайсы, зависящие от базовых
     ...createBooksSlice(...args),
     ...createCertificatesSlice(...args),
-    // В конце общий слайс
     ...createSharedSlice(...args),
   })),
 );

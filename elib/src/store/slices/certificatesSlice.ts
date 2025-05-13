@@ -14,7 +14,7 @@ export type CertificatesSlice = {
   fetchCertificates: () => Promise<void>;
   addCertificate: (certificate: FormData) => Promise<Certificate>;
   updateCertificate: (id: number, certificate: FormData) => Promise<void>;
-  removeCertificate: (id: string) => Promise<void>;
+  removeCertificate: (id: number) => Promise<void>;
 };
 
 export const createCertificatesSlice: StateCreator<
@@ -42,11 +42,11 @@ export const createCertificatesSlice: StateCreator<
         certificates: state.certificates.map(c => (c.id === id ? data : c)),
       }));
     },
-    removeCertificate: async (id: string) => {
+    removeCertificate: async (id: number) => {
       set(state => ({
-        certificates: state.certificates.filter(c => c.id !== +id),
+        certificates: state.certificates.filter(c => c.id !== id),
       }));
-      await deleteCertificate(id);
+      await deleteCertificate(id.toFixed());
     },
   }),
   {

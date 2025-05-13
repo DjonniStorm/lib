@@ -9,20 +9,16 @@ export const MainPage = (): React.JSX.Element => {
   const booksByGenre = React.useMemo(() => {
     console.log('Recalculating booksByGenre, books:', books);
     if (!books || books.length === 0) {
-      console.log('No books to process');
       return {};
     }
 
     return books.reduce((acc: Record<string, Book[]>, book: Book) => {
-      console.log('Processing book:', book);
       if (!Array.isArray(book.genres) || book.genres.length === 0) {
-        console.log(`Book ${book.name} has no valid genres:`, book.genres);
         return acc;
       }
 
       book.genres.forEach(genre => {
         if (!genre?.name) {
-          console.log(`Invalid genre in book ${book.name}:`, genre);
           return;
         }
         if (!acc[genre.name]) {
@@ -33,8 +29,6 @@ export const MainPage = (): React.JSX.Element => {
       return acc;
     }, {});
   }, [books]);
-
-  console.log(Object.entries(booksByGenre));
 
   React.useEffect(() => {
     const unsub = () => {
@@ -47,7 +41,7 @@ export const MainPage = (): React.JSX.Element => {
   }, []);
 
   return (
-    <main className="flex-1">
+    <main className="flex-1 p-4">
       {Object.entries(booksByGenre).map(([genre, books]) => (
         <React.Fragment key={genre}>
           <div className="main-content__heading-block">

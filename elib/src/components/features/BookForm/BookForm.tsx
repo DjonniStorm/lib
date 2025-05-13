@@ -1,99 +1,181 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useElibStore } from '../../../store/store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormDataEdit, formDataSchemaEdit } from './formDataSchema';
+import {
+  FormDataEdit,
+  formDataSchemaEdit,
+  FormDataAdd,
+  formDataSchemaAdd,
+} from './formDataSchema';
 import type { Book } from '../../../types';
+import { Button } from '../../ui/Button';
+import {
+  AuthorsCheckboxesEdit,
+  AuthorsCheckboxesAdd,
+} from './AuthorCheckboxes';
+import { GenresCheckboxesEdit, GenresCheckboxesAdd } from './GenreCheckboxes';
 
 type Props = {
   initialValue?: Book;
 };
 
 export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
+  const isEditing = !!initialValue;
+
   const {
-    control,
-    register,
-    reset,
-    formState: { errors },
-    handleSubmit,
+    control: controlEdit,
+    register: registerEdit,
+    reset: resetEdit,
+    formState: { errors: errorsEdit },
+    handleSubmit: handleSubmitEdit,
   } = useForm<FormDataEdit>({
     resolver: zodResolver(formDataSchemaEdit),
-    defaultValues: initialValue
-      ? {
-          id: initialValue.id.toFixed(),
-          name: initialValue.name,
-          authorIds: initialValue.authors.map(author => author.id),
-          genreIds: initialValue.genres.map(genre => genre.id),
-          cover: undefined,
-          file: undefined,
-        }
-      : {
-          id: undefined,
-          name: '',
-          authorIds: [],
-          genreIds: [],
-          cover: undefined,
-          file: undefined,
-        },
   });
+
+  const {
+    control: controlAdd,
+    register: registerAdd,
+    reset: resetAdd,
+    formState: { errors: errorsAdd },
+    handleSubmit: handleSubmitAdd,
+  } = useForm<FormDataAdd>({
+    resolver: zodResolver(formDataSchemaAdd),
+  });
+
+  const register = isEditing ? registerEdit : registerAdd;
+  const errors = isEditing ? errorsEdit : errorsAdd;
+  const reset = isEditing ? resetEdit : resetAdd;
 
   const authors = useElibStore(state => state.authors);
   const genres = useElibStore(state => state.genres);
   const updateBook = useElibStore(state => state.updateBook);
   const createBook = useElibStore(state => state.addBook);
 
-  const handleSubmitForm = async (data: FormDataEdit) => {
-    console.log('Form submitted', data);
+  React.useEffect(() => {
+    if (initialValue) {
+      const authorIds = Array.isArray(initialValue.authors)
+        ? initialValue.authors.map(author => author.id)
+        : [];
+
+      const genreIds = Array.isArray(initialValue.genres)
+        ? initialValue.genres.map(genre => genre.id)
+        : [];
+
+      console.log('Извлеченные ID авторов:', authorIds);
+      console.log('Извлеченные ID жанров:', genreIds);
+
+      resetEdit({
+        id: initialValue.id.toString(),
+        name: initialValue.name,
+        authorIds,
+        genreIds,
+        cover: undefined,
+        file: undefined,
+      });
+    } else {
+      resetAdd({
+        id: Date.now().toString(),
+        name: '',
+        authorIds: [],
+        genreIds: [],
+        cover: undefined,
+        file: undefined,
+      });
+    }
+  }, [initialValue, resetEdit, resetAdd]);
+
+  const processFormData = (data: FormDataEdit | FormDataAdd) => {
+    console.log('Данные формы перед отправкой:', data);
 
     const formData = new FormData();
-    formData.append('id', data.id?.toString() || Date.now().toFixed()); // id обязателен
+    formData.append('id', data.id || Date.now().toString());
     if (data.name) formData.append('name', data.name);
-    if (data.authorIds) formData.append('authorIds', data.authorIds.join(','));
-    if (data.genreIds) formData.append('genreIds', data.genreIds.join(','));
+
+    if (data.authorIds && data.authorIds.length > 0) {
+      const authorObjects = data.authorIds.map(authorId => {
+        const author = authors.find(a => a.id === authorId);
+        return {
+          id: authorId,
+          name: author ? author.name : 'Неизвестный автор',
+        };
+      });
+      formData.append('authors', JSON.stringify(authorObjects));
+    } else {
+      formData.append('authors', JSON.stringify([]));
+    }
+
+    if (data.genreIds && data.genreIds.length > 0) {
+      const genreObjects = data.genreIds.map(genreId => {
+        const genre = genres.find(g => g.id === genreId);
+        return {
+          id: genreId,
+          name: genre ? genre.name : 'Неизвестный жанр',
+        };
+      });
+      formData.append('genres', JSON.stringify(genreObjects));
+    } else {
+      formData.append('genres', JSON.stringify([]));
+    }
+
     if (data.cover) formData.append('poster', data.cover);
     if (data.file) formData.append('file', data.file);
 
+    console.log(
+      'FormData для отправки:',
+      Object.fromEntries(formData.entries()),
+    );
+
+    return formData;
+  };
+
+  const handleSubmitEditForm = async (data: FormDataEdit) => {
     try {
-      if (initialValue) {
-        await updateBook(+data.id, formData);
-        console.log('Book updated successfully');
-      } else {
-        const newBook = await createBook(formData);
-        console.log('Book created successfully:', newBook);
-      }
-
-      const fetchBooks = useElibStore.getState().fetchBooks;
-      if (typeof fetchBooks === 'function') {
-        try {
-          await fetchBooks();
-          console.log('Books list refreshed');
-        } catch (refreshError) {
-          console.error('Failed to refresh books list:', refreshError);
-        }
-      }
-
+      const formData = processFormData(data);
+      await updateBook(+data.id, formData);
+      console.log('Книга успешно обновлена');
+      refreshBooksList();
       reset();
     } catch (error) {
-      console.error('Error saving book:', error);
+      console.error('Ошибка при обновлении книги:', error);
+      alert(error);
+    }
+  };
 
-      let errorMessage = 'Произошла ошибка при сохранении книги';
+  const handleSubmitAddForm = async (data: FormDataAdd) => {
+    try {
+      const formData = processFormData(data);
+      const newBook = await createBook(formData);
+      console.log('Книга успешно создана:', newBook);
+      refreshBooksList();
+      reset();
+    } catch (error) {
+      console.error('Ошибка при создании книги:', error);
+      alert(error);
+    }
+  };
 
-      if (error instanceof Error) {
-        errorMessage += ': ' + error.message;
-      } else if (typeof error === 'string') {
-        errorMessage += ': ' + error;
+  const refreshBooksList = async () => {
+    const fetchBooks = useElibStore.getState().fetchBooks;
+    if (typeof fetchBooks === 'function') {
+      try {
+        await fetchBooks();
+        console.log('Список книг обновлен');
+      } catch (refreshError) {
+        console.error('Ошибка при обновлении списка книг:', refreshError);
       }
-
-      alert(errorMessage);
     }
   };
 
   return (
     <form
-      onSubmit={handleSubmit(handleSubmitForm)}
-      className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md space-y-6"
+      onSubmit={
+        isEditing
+          ? handleSubmitEdit(handleSubmitEditForm)
+          : handleSubmitAdd(handleSubmitAddForm)
+      }
+      className="flex flex-col gap-4 border rounded p-4 w-[700px] mx-auto shadow-lg space-y-6"
     >
-      {/* Скрытое поле ID */}
       <input type="hidden" {...register('id')} />
 
       <div>
@@ -104,6 +186,7 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
           {...register('name')}
           placeholder="Введите название"
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          required={!isEditing}
         />
         {errors.name && (
           <span className="text-red-500 text-sm mt-1 block">
@@ -116,34 +199,11 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
         <label className="block text-sm font-medium text-gray-700">
           Авторы:
         </label>
-        <Controller
-          name="authorIds"
-          control={control}
-          render={({ field }) => (
-            <div className="mt-2 space-y-2">
-              {authors?.map(author => (
-                <label
-                  key={author.id}
-                  className="flex items-center space-x-2 text-sm text-gray-600"
-                >
-                  <input
-                    type="checkbox"
-                    value={author.id}
-                    checked={field.value?.includes(author.id) || false}
-                    onChange={e => {
-                      const newValue = e.target.checked
-                        ? [...(field.value || []), author.id]
-                        : (field.value || []).filter(id => id !== author.id);
-                      field.onChange(newValue);
-                    }}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span>{author.name}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        />
+        {isEditing ? (
+          <AuthorsCheckboxesEdit control={controlEdit} authors={authors} />
+        ) : (
+          <AuthorsCheckboxesAdd control={controlAdd} authors={authors} />
+        )}
         {errors.authorIds && (
           <span className="text-red-500 text-sm mt-1 block">
             {errors.authorIds.message}
@@ -151,39 +211,15 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
         )}
       </div>
 
-      {/* Жанры */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Жанры:
         </label>
-        <Controller
-          name="genreIds"
-          control={control}
-          render={({ field }) => (
-            <div className="mt-2 space-y-2">
-              {genres?.map(genre => (
-                <label
-                  key={genre.id}
-                  className="flex items-center space-x-2 text-sm text-gray-600"
-                >
-                  <input
-                    type="checkbox"
-                    value={genre.id}
-                    checked={field.value?.includes(genre.id) || false}
-                    onChange={e => {
-                      const newValue = e.target.checked
-                        ? [...(field.value || []), genre.id]
-                        : (field.value || []).filter(id => id !== genre.id);
-                      field.onChange(newValue);
-                    }}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span>{genre.name}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        />
+        {isEditing ? (
+          <GenresCheckboxesEdit control={controlEdit} genres={genres} />
+        ) : (
+          <GenresCheckboxesAdd control={controlAdd} genres={genres} />
+        )}
         {errors.genreIds && (
           <span className="text-red-500 text-sm mt-1 block">
             {errors.genreIds.message}
@@ -191,7 +227,6 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
         )}
       </div>
 
-      {/* Обложка */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Обложка:
@@ -205,7 +240,8 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
           type="file"
           accept="image/jpeg,image/png"
           {...register('cover')}
-          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray file:text-gray-700 hover:file:bg-main"
+          required={!isEditing}
         />
         {errors.cover && (
           <span className="text-red-500 text-sm mt-1 block">
@@ -214,7 +250,6 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
         )}
       </div>
 
-      {/* Файл книги */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Файл книги:
@@ -228,7 +263,8 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
           type="file"
           accept=".epub"
           {...register('file')}
-          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray file:text-gray-700 hover:file:bg-main"
+          required={!isEditing}
         />
         {errors.file && (
           <span className="text-red-500 text-sm mt-1 block">
@@ -237,13 +273,11 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
         )}
       </div>
 
-      {/* Кнопка отправки */}
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-      >
-        Сохранить
-      </button>
+      <div className="mx-auto">
+        <Button className="max-w-[200px] w-50" type="submit">
+          {isEditing ? 'Обновить' : 'Добавить'}
+        </Button>
+      </div>
     </form>
   );
 };

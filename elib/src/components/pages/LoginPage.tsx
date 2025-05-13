@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
+import { Button } from '../ui/Button';
 
 type FormData = {
   email: string;
@@ -61,12 +62,12 @@ export const LoginPage = (): React.JSX.Element => {
             {errors.password && (
               <span className="text-red-600">{errors.password.message}</span>
             )}
-            <button
+            <Button
               type="submit"
-              className="bg-gray-300 rounded-xl border border-gray-900 cursor-pointer p-2 transition hover:bg-gray-700 active:bg-gray-700"
+              className="rounded-xl cursor-pointer p-2 transition active:bg-gray-700"
             >
               Войти
-            </button>
+            </Button>
           </form>
           <Link to={'/register'} className="text-center text-gray-700">
             <div>Впервые у нас?</div>

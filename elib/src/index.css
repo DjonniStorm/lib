@@ -3,7 +3,7 @@
 
 body {
   min-height: 100vh;
-  font-family: 'Inter', 'sans';
+  font-family: 'Inter', sans-serif;
   display: flex;
   flex-direction: column;
 

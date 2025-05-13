@@ -3,28 +3,6 @@ import type { Book, Certificate, Genre, Author } from '../types';
 
 export const getBooks = async (): Promise<Book[]> => getAllItems('books');
 
-// export const getBooks = async (): Promise<Book[]> => {
-//   await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay
-//   return [
-//     {
-//       id: 1,
-//       name: 'Шерлок Холмс1',
-//       authors: [{ id: 1, name: 'Артур Конан Дойл' }],
-//       genres: [{ id: 2, name: 'Детектив' }],
-//       cover: '/images/covers/sherlockholmes.jpg',
-//       path: 'sherlockholmes.epub',
-//     },
-//     {
-//       id: 2,
-//       name: 'Гарри Поттер и философский камень',
-//       authors: [{ id: 1, name: 'Артур Конан Дойл' }],
-//       genres: [{ id: 2, name: 'Детектив' }],
-//       cover: '/images/covers/harrypotter.jpg',
-//       path: 'harrypotter.epub',
-//     },
-//   ];
-// };
-
 export const postBook = async (data: FormData): Promise<Book> =>
   createItem('books', data);
 export const updateBook = async (data: FormData): Promise<Book> =>

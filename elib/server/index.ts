@@ -19,28 +19,9 @@ import {
   checkItem,
   readJson,
 } from './IO';
-import multer from 'multer';
 
 const app = express();
 const port = 3000;
-
-// Настройка multer для загрузки файлов
-const storage = multer.diskStorage({
-  destination: (
-    _req: Request,
-    _file: Express.Multer.File,
-    cb: (error: Error | null, destination: string) => void,
-  ) => {
-    cb(null, path.join(__dirname, '..', 'public', 'images', 'covers'));
-  },
-  filename: (
-    _req: Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, filename: string) => void,
-  ) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
 
 app.use(cors());
 app.use(express.json());
@@ -90,28 +71,33 @@ app.post('/books', async (req, res) => {
       .json({ message: 'Загрузите обложку в формате JPG или PNG' });
   }
 
-  const authorIds = req.body.authorIds
-    ? typeof req.body.authorIds === 'string'
-      ? req.body.authorIds.split(',').map(Number)
-      : Array.isArray(req.body.authorIds)
-      ? req.body.authorIds.map(Number)
-      : []
-    : [];
-  const genreIds = req.body.genreIds
-    ? typeof req.body.genreIds === 'string'
-      ? req.body.genreIds.split(',').map(Number)
-      : Array.isArray(req.body.genreIds)
-      ? req.body.genreIds.map(Number)
-      : []
-    : [];
-  const authors = await readJson(AUTHORS_PATH);
-  const genres = await readJson(GENRES_PATH);
+  let authors = [];
+  let genres = [];
+
+  // Пытаемся распарсить JSON-строки с авторами и жанрами
+  if (req.body.authors) {
+    try {
+      authors = JSON.parse(req.body.authors);
+      console.log('Parsed authors:', authors);
+    } catch (e) {
+      console.error('Error parsing authors:', e);
+    }
+  }
+
+  if (req.body.genres) {
+    try {
+      genres = JSON.parse(req.body.genres);
+      console.log('Parsed genres:', genres);
+    } catch (e) {
+      console.error('Error parsing genres:', e);
+    }
+  }
 
   const bookData: Book = {
     id: +(Math.random() * 1000).toFixed(0), // Will be set by updateJson
     cover: `/images/covers/${poster.name}`,
-    authors: authors.filter((a: Author) => authorIds.includes(a.id)),
-    genres: genres.filter((g: Genre) => genreIds.includes(g.id)),
+    authors,
+    genres,
     name: req.body.name,
     path: `/books/${file.name}`,
   };
@@ -161,12 +147,27 @@ const putBookHandler: RequestHandler = async (req, res) => {
     const coverFile = typedReq.files?.cover as
       | fileUpload.UploadedFile
       | undefined;
-    const authors = req.body.authorIds
-      ? req.body.authorIds.split(',').map(Number)
-      : existingBook.authors;
-    const genres = req.body.genreIds
-      ? req.body.genreIds.split(',').map(Number)
-      : existingBook.genres;
+
+    let authors = existingBook.authors;
+    let genres = existingBook.genres;
+
+    if (req.body.authors) {
+      try {
+        authors = JSON.parse(req.body.authors);
+        console.log('Parsed authors:', authors);
+      } catch (e) {
+        console.error('Error parsing authors:', e);
+      }
+    }
+
+    if (req.body.genres) {
+      try {
+        genres = JSON.parse(req.body.genres);
+        console.log('Parsed genres:', genres);
+      } catch (e) {
+        console.error('Error parsing genres:', e);
+      }
+    }
 
     const updatedBook: Book = {
       id: bookId,

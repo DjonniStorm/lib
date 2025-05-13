@@ -5,12 +5,14 @@ type Props = {
   items: { id: number; name: string }[];
   selectedId?: number;
   onItemClick: (id: number) => void;
+  handleDeleteItem: (id: number) => void;
 };
 
 export const ListView = ({
   items,
   selectedId,
   onItemClick,
+  handleDeleteItem,
 }: Props): React.JSX.Element => {
   const handleItemClick = (id: number) => {
     onItemClick(id);
@@ -22,7 +24,7 @@ export const ListView = ({
         {items?.map(item => (
           <li
             className={cn(
-              'w-full text-justify overflow-ellipsis hover:bg-gray',
+              'w-full flex justify-between text-justify overflow-ellipsis border border-main p-2 rounded hover:bg-gray hover:border hover:border-dark',
               {
                 'bg-gray': selectedId && selectedId === item.id,
               },
@@ -31,6 +33,12 @@ export const ListView = ({
             onClick={() => handleItemClick(item.id)}
           >
             {item.name}
+            <button
+              onClick={() => handleDeleteItem(item.id)}
+              className="text-red-500 hover:text-red-700 "
+            >
+              x
+            </button>
           </li>
         ))}
       </ul>

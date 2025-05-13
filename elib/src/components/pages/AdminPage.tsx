@@ -4,6 +4,7 @@ import { useElibStore, type Store } from '../../store/store';
 import { z } from 'zod';
 import { AdminForm } from '../features/AdminForm/AdminForm';
 import type { Book, Certificate } from '../../types';
+import { Button } from '../ui/Button';
 
 const optionVariants = z.object({
   value: z.enum(['books', 'certificates']),
@@ -12,18 +13,23 @@ const optionVariants = z.object({
 type OptionVariants = z.infer<typeof optionVariants>['value'];
 
 export const AdminPage = (): React.JSX.Element => {
-  const [currentList, setCurrentList] = React.useState<OptionVariants>('books');
+  const [currentList, setCurrentList] = React.useState<OptionVariants>(
+    () => 'books',
+  );
   const [selectedItem, setSelectedItem] = React.useState<Book | Certificate>();
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const [loading, setLoading] = React.useState<boolean>(() => true);
 
-  // Получаем данные из стора
   const books = useElibStore((state: Store) => state.books);
   const certificates = useElibStore((state: Store) => state.certificates);
 
-  // Получаем функцию загрузки всех данных
   const getBoth = useElibStore((state: Store) => state.getBoth);
 
-  // Загружаем данные при монтировании
+  const deleteBook = useElibStore((state: Store) => state.removeBook);
+
+  const deleteCertificate = useElibStore(
+    (state: Store) => state.removeCertificate,
+  );
+
   React.useEffect(() => {
     console.log('AdminPage: Loading data');
     setLoading(true);
@@ -31,7 +37,6 @@ export const AdminPage = (): React.JSX.Element => {
     const loadData = async () => {
       try {
         await getBoth();
-        console.log('AdminPage: Data loaded successfully');
       } catch (error) {
         console.error('AdminPage: Error loading data', error);
       } finally {
@@ -48,7 +53,13 @@ export const AdminPage = (): React.JSX.Element => {
     }
   };
 
+  const handleCreateItem = () => {
+    console.log('click create');
+    setSelectedItem(undefined);
+  };
+
   const onItemClick = (id: number) => {
+    console.log('click item', id);
     switch (currentList) {
       case 'books': {
         const book = books.find((b: Book) => b.id === id);
@@ -58,6 +69,22 @@ export const AdminPage = (): React.JSX.Element => {
       case 'certificates': {
         const certificate = certificates.find((c: Certificate) => c.id === id);
         setSelectedItem(certificate);
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
+  const handleDeleteItem = (id: number) => {
+    console.log('click delete', id);
+    switch (currentList) {
+      case 'books': {
+        deleteBook(id);
+        break;
+      }
+      case 'certificates': {
+        deleteCertificate(id);
         break;
       }
       default:
@@ -88,9 +115,13 @@ export const AdminPage = (): React.JSX.Element => {
               items={currentList === 'books' ? books : certificates}
               onItemClick={onItemClick}
               selectedId={selectedItem?.id}
+              handleDeleteItem={handleDeleteItem}
             />
+            <Button className="px-4 py-3" onClick={handleCreateItem}>
+              Создать
+            </Button>
           </section>
-          <section className="flex-1">
+          <section className="flex-1 flex justify-center items-center">
             <AdminForm currentList={currentList} initialValue={selectedItem} />
           </section>
         </div>
@@ -98,3 +129,5 @@ export const AdminPage = (): React.JSX.Element => {
     </main>
   );
 };
+
+export default AdminPage;

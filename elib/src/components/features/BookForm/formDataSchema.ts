@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Схема для добавления (все поля обязательны)
 export const formDataSchemaAdd = z.object({
   id: z.string().optional(),
   name: z.string().min(1, { message: 'Название обязательно' }),
@@ -56,7 +55,9 @@ export const formDataSchemaEdit = z.object({
         ['image/jpeg', 'image/png'].includes(fileList[0]?.type),
       { message: 'Обложка должна быть в формате JPG или PNG' },
     )
-    .transform(fileList => (fileList ? fileList[0] : undefined)),
+    .transform(fileList =>
+      fileList && fileList.length > 0 ? fileList[0] : undefined,
+    ),
   file: z
     .any()
     .optional()
@@ -65,7 +66,9 @@ export const formDataSchemaEdit = z.object({
         !fileList || !fileList.length || fileList[0]?.name.endsWith('.epub'),
       { message: 'Файл книги должен быть в формате EPUB' },
     )
-    .transform(fileList => (fileList ? fileList[0] : undefined)),
+    .transform(fileList =>
+      fileList && fileList.length > 0 ? fileList[0] : undefined,
+    ),
 });
 
 export type FormDataAdd = z.infer<typeof formDataSchemaAdd>;

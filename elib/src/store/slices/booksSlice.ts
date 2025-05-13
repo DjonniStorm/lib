@@ -14,7 +14,7 @@ export type BooksSlice = {
   fetchBooks: () => Promise<void>;
   addBook: (book: FormData) => Promise<Book>;
   updateBook: (id: number, book: FormData) => Promise<void>;
-  removeBook: (id: string) => Promise<void>;
+  removeBook: (id: number) => Promise<void>;
 };
 
 export const createBooksSlice: StateCreator<
@@ -43,11 +43,11 @@ export const createBooksSlice: StateCreator<
         books: state.books.map(b => (b.id === +id ? data : b)),
       }));
     },
-    removeBook: async (id: string) => {
+    removeBook: async (id: number) => {
       set(state => ({
-        books: state.books.filter(b => b.id !== +id),
+        books: state.books.filter(b => b.id !== id),
       }));
-      await deleteBook(id);
+      await deleteBook(id.toFixed());
     },
   }),
   {

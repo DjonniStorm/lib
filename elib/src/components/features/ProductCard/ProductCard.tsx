@@ -12,8 +12,8 @@ export const ProductCard = ({
 }: ProductCardProps): React.JSX.Element => {
   return (
     <>
-      <div className="flex flex-col justify-between border-2 border-gray-300 overflow-hidden shadow-lg h-[380px] w-[250px] bg-gray-300 rounded-lg">
-        <div className="rounded-t-lg h-[300px] overflow-hidden bg-gray-300 flex justify-center items-center">
+      <div className="flex flex-col justify-between border-2 border-gray-300 overflow-hidden shadow-lg h-[380px] w-[250px] bg-gray rounded-lg">
+        <div className="rounded-t-lg h-[300px] overflow-hidden bg-main flex justify-center items-center">
           <img
             className="object-contain w-full h-full p-4"
             src={image}
@@ -21,14 +21,15 @@ export const ProductCard = ({
             loading="lazy"
           />
         </div>
-        <div className="flex-1 px-5 flex justify-between items-center bg-gray-300">
+        <div className="flex-1 px-5 flex justify-between items-center bg-main">
           <span className="block text-xl overflow-hidden text-ellipsis max-w-[80%]">
             {name}
           </span>
           <Button
             className={cn(
-              'bg-gray-300 rounded-xl border border-gray-900 cursor-pointer p-2 transition hover:bg-gray-700 active:bg-gray-700',
+              'rounded-xl border border-gray-900 cursor-pointer p-2 transition hover:bg-gray active:bg-gray',
             )}
+            rounded
           >
             <Link to={link}>
               <img

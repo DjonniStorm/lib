@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { lazy, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { App } from './App.tsx';
@@ -10,7 +10,8 @@ import { RegisterPage } from './components/pages/RegisterPage.tsx';
 import { LoginPage } from './components/pages/LoginPage.tsx';
 import { UserPage } from './components/pages/UserPage.tsx';
 import { BookPage } from './components/pages/BookPage.tsx';
-import { AdminPage } from './components/pages/AdminPage.tsx';
+
+const AdminPage = lazy(() => import('./components/pages/AdminPage.tsx'));
 
 const routes = createBrowserRouter([
   {
@@ -46,9 +47,14 @@ const routes = createBrowserRouter([
         element: <AdminPage />,
       },
     ],
-    errorElement: <div>404</div>,
+    errorElement: (
+      <div>
+        Error...
+        <img src="https://c.tenor.com/m4Gn7YI8y4YAAAAC/tenor.gif" />
+      </div>
+    ),
   },
-]);
+] as const);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

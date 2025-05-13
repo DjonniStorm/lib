@@ -8,7 +8,7 @@ export const CertificateCard = ({
   name,
 }: CertificateCardProps): React.JSX.Element => {
   return (
-    <section className="flex justify-center border rounded p-4">
+    <section className="flex justify-center border rounded p-4 lg:min-h-[300px]">
       <div className="flex justify-center">
         <img src={img} alt={img + ' logo'} className="w-full" />
       </div>
