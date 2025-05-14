@@ -58,6 +58,11 @@ export const AdminPage = (): React.JSX.Element => {
     setSelectedItem(undefined);
   };
 
+  const handleEditAndAdd = () => {
+    setSelectedItem(undefined);
+    console.log('deleted');
+  };
+
   const onItemClick = (id: number) => {
     console.log('click item', id);
     switch (currentList) {
@@ -122,7 +127,11 @@ export const AdminPage = (): React.JSX.Element => {
             </Button>
           </section>
           <section className="flex-1 flex justify-center items-center">
-            <AdminForm currentList={currentList} initialValue={selectedItem} />
+            <AdminForm
+              handleEditAndAdd={handleEditAndAdd}
+              currentList={currentList}
+              initialValue={selectedItem}
+            />
           </section>
         </div>
       )}

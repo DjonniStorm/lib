@@ -30,24 +30,52 @@ export const createBooksSlice: StateCreator<
       set({ books: data });
     },
     addBook: async (book: FormData) => {
-      const newBook = await postBook(book);
+      console.log('adding new book', Object.entries(book));
+      const data = Object.fromEntries(book) as any;
+      const newBook: Book = {
+        id: data.id,
+        name: data.name,
+        authors: JSON.parse(data.authors),
+        genres: JSON.parse(data.genres),
+        cover: data.poster.name,
+        path: data.file.name,
+      };
       set(state => ({
         books: [...state.books, newBook],
       }));
-      await get().fetchBooks();
-      return newBook;
+      // await get().fetchBooks();
+
+      // await postBook(book);
+
+      return Promise.resolve(newBook);
     },
     updateBook: async (id: number, book: FormData) => {
-      const data = await updateBookAPI(book);
+      const data = Object.fromEntries(book) as any;
       set(state => ({
-        books: state.books.map(b => (b.id === +id ? data : b)),
+        books: state.books.map(b => {
+          if (b.id === id) {
+            const newBookVersion: Book = {
+              id: id,
+              name: data.name || b.name,
+              authors: JSON.parse(data.authors) || b.authors,
+              genres: JSON.parse(data.genres) || b.genres,
+              cover: data.poster || b.cover,
+              path: data.file || b.path,
+            };
+
+            return newBookVersion;
+          }
+          return b;
+        }),
       }));
+
+      // await updateBookAPI(book);
     },
     removeBook: async (id: number) => {
       set(state => ({
         books: state.books.filter(b => b.id !== id),
       }));
-      await deleteBook(id.toFixed());
+      // await deleteBook(id.toFixed());
     },
   }),
   {
