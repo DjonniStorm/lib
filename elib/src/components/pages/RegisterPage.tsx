@@ -42,7 +42,7 @@ export const RegisterPage = (): React.JSX.Element => {
                 placeholder="Имя"
                 required
                 {...register('name', {
-                  required: 'Name is required',
+                  required: 'введите имя',
                 })}
               />
               {errors.name && (
@@ -62,7 +62,7 @@ export const RegisterPage = (): React.JSX.Element => {
                   required: 'Email is required',
                   pattern: {
                     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                    message: 'Invalid email address',
+                    message: 'введите email',
                   },
                 })}
               />
@@ -80,7 +80,7 @@ export const RegisterPage = (): React.JSX.Element => {
                 placeholder="Пароль"
                 required
                 {...register('password', {
-                  required: 'password is required',
+                  required: 'введите пароль',
                 })}
               />
               {errors.password && (
@@ -97,7 +97,7 @@ export const RegisterPage = (): React.JSX.Element => {
                 placeholder="Номер карты"
                 required
                 {...register('card', {
-                  required: 'Card number is required',
+                  required: 'введите номер карты',
                 })}
               />
               {errors.card && (

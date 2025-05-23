@@ -38,10 +38,10 @@ export const LoginPage = (): React.JSX.Element => {
               placeholder="Email"
               required
               {...register('email', {
-                required: 'Email is required',
+                required: 'введите email',
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: 'Invalid email address',
+                  message: 'некорректный email',
                 },
               })}
             />
@@ -56,7 +56,7 @@ export const LoginPage = (): React.JSX.Element => {
               placeholder="Пароль"
               required
               {...register('password', {
-                required: 'password is required',
+                required: 'придумайте пароль',
               })}
             />
             {errors.password && (

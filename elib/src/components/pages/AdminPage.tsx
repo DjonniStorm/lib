@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { AdminForm } from '../features/AdminForm/AdminForm';
 import type { Book, Certificate } from '../../types';
 import { Button } from '../ui/Button';
+import { UiButton } from '../ui';
 
 const optionVariants = z.object({
   value: z.enum(['books', 'certificates']),
@@ -123,6 +124,7 @@ export const AdminPage = (): React.JSX.Element => {
           </section>
           <section className="flex-1 flex justify-center items-center">
             <AdminForm currentList={currentList} initialValue={selectedItem} />
+            <UiButton className="bg-orange-400 border p-10 rounded" onclick={() => console.log('clicked')}>Кнопка на Svelte</UiButton>
           </section>
         </div>
       )}

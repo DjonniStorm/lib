@@ -1,21 +1,18 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
-// Импортируем типы слайсов
 import type { AuthorsSlice } from './slices/authorsSlice';
 import type { GenresSlice } from './slices/genresSlice';
 import type { BooksSlice } from './slices/booksSlice';
 import type { CertificatesSlice } from './slices/certificatesSlice';
 import type { SharedSlice } from './slices/sharedSlice';
 
-// Определяем тип Store как комбинацию всех слайсов
 export type Store = AuthorsSlice &
   GenresSlice &
   BooksSlice &
   CertificatesSlice &
   SharedSlice;
 
-// Импортируем функции создания слайсов
 import { createAuthorsSlice } from './slices/authorsSlice';
 import { createGenresSlice } from './slices/genresSlice';
 import { createBooksSlice } from './slices/booksSlice';

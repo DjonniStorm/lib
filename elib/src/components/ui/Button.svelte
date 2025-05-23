@@ -1,5 +1,6 @@
 <script lang="ts" module>
   import type { SvelteHTMLElements } from "svelte/elements";
+  import { cn } from "../../lib/cn";
 
     type ButtonProps = {
         text?: string;
@@ -14,7 +15,7 @@
     let { text, onclick, disabled, className = '', children }: ButtonProps = $props();
 </script>
 
-<button class={className} {onclick} {disabled}>
+<button class={cn(className)} {onclick} {disabled}>
     {#if text}
         {text}
     {/if}
