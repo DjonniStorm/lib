@@ -1,9 +1,7 @@
-import React from 'react';
 import { Controller, Control } from 'react-hook-form';
 import { Genre } from '../../../types';
 import { FormDataEdit, FormDataAdd } from './formDataSchema';
 
-// Компонент для отображения флажков жанров в режиме редактирования
 export const GenresCheckboxesEdit = ({
   control,
   genres,

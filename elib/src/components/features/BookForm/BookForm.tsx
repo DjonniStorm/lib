@@ -18,11 +18,15 @@ import { GenresCheckboxesEdit, GenresCheckboxesAdd } from './GenreCheckboxes';
 
 type Props = {
   initialValue?: Book;
+  handleEditAndAdd: () => void;
 };
 
-export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
+export const BookForm = ({
+  initialValue,
+  handleEditAndAdd,
+}: Props): React.JSX.Element => {
   const isEditing = !!initialValue;
-
+  console.log('rerender BookForm', initialValue);
   const {
     control: controlEdit,
     register: registerEdit,
@@ -53,6 +57,8 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
   const createBook = useElibStore(state => state.addBook);
 
   React.useEffect(() => {
+    console.log('rerender, initial: ', initialValue);
+
     if (initialValue) {
       const authorIds = Array.isArray(initialValue.authors)
         ? initialValue.authors.map(author => author.id)
@@ -133,9 +139,18 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
     try {
       const formData = processFormData(data);
       await updateBook(+data.id, formData);
-      console.log('Книга успешно обновлена');
-      refreshBooksList();
-      reset();
+      // console.log('Книга успешно обновлена');
+      // refreshBooksList();
+      reset({
+        id: Date.now().toString(),
+        name: '',
+        authorIds: [],
+        genreIds: [],
+        cover: undefined,
+        file: undefined,
+      });
+
+      handleEditAndAdd();
     } catch (error) {
       console.error('Ошибка при обновлении книги:', error);
       alert(error);
@@ -145,10 +160,17 @@ export const BookForm = ({ initialValue }: Props): React.JSX.Element => {
   const handleSubmitAddForm = async (data: FormDataAdd) => {
     try {
       const formData = processFormData(data);
-      const newBook = await createBook(formData);
-      console.log('Книга успешно создана:', newBook);
-      refreshBooksList();
-      reset();
+      await createBook(formData);
+      // refreshBooksList();
+      reset({
+        id: Date.now().toString(),
+        name: '',
+        authorIds: [],
+        genreIds: [],
+        cover: undefined,
+        file: undefined,
+      });
+      handleEditAndAdd();
     } catch (error) {
       console.error('Ошибка при создании книги:', error);
       alert(error);

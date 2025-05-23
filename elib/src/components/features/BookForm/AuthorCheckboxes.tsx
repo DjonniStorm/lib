@@ -1,9 +1,7 @@
-import React from 'react';
 import { Controller, Control } from 'react-hook-form';
 import { Author } from '../../../types';
 import { FormDataEdit, FormDataAdd } from './formDataSchema';
 
-// Компонент для отображения флажков авторов в режиме редактирования
 export const AuthorsCheckboxesEdit = ({
   control,
   authors,

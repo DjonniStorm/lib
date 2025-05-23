@@ -17,6 +17,7 @@ export const ListView = ({
   const handleItemClick = (id: number) => {
     onItemClick(id);
   };
+  console.log('rerender ListView', items);
 
   return (
     <>
@@ -34,7 +35,9 @@ export const ListView = ({
           >
             {item.name}
             <button
-              onClick={() => handleDeleteItem(item.id)}
+              onClick={() => {
+                handleDeleteItem(item.id);
+              }}
               className="text-red-500 hover:text-red-700 "
             >
               x
