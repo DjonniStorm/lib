@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Шерлок Холмс1",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 1,
+        "name": "Детектив"
+      }
+    ],
+    "cover": "/images/covers/sherlockholmes.jpg",
+    "path": "sherlockholmes.epub"
+  },
+  {
+    "id": 2,
+    "name": "Гарри Поттер и философский камень",
+    "authors": [
+      {
+        "id": 0,
+        "name": "Артур Конан Дойл"
+      }
+    ],
+    "genres": [
+      {
+        "id": 1,
+        "name": "Детектив"
+      }
+    ],
+    "cover": "/images/covers/harrypotter.jpg",
+    "path": "harrypotter.epub"
+  }
+]
